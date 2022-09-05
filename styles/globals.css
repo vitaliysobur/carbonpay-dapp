@@ -24,3 +24,47 @@ a {
     background: black;
   }
 }
+
+.main {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+}
+
+.headerInner {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  top: 0px;
+  position: relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  z-index: 2;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 40px;
+  -webkit-box-align: center;
+  align-items: center;
+  flex: 1 1 0%;
+  overflow: hidden auto;
+  z-index: 1;
+}
