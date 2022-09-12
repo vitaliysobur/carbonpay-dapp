@@ -2,16 +2,21 @@ import React, { useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import s from '../styles/App.module.css'
-import { CeloProvider } from '@celo/react-celo';
+import { CeloProvider, Alfajores, useCelo } from '@celo/react-celo';
 import '@celo/react-celo/lib/styles.css';
 
 export default function WrappedApp() {
   return (
     <CeloProvider
       dapp={{
-        name: 'My awesome dApp',
-        description: 'My awesome description',
+        name: 'CarbonPay',
+        description: 'Fight climate change by doing whatever you do best',
         url: 'https://example.com',
+      }}
+      defaultNetwork={Alfajores.name}
+      connectModal={{
+        title: <span>Connect your Wallet</span>,
+        providersOptions: { searchable: true }
       }}
     >
       <App/>
@@ -21,6 +26,22 @@ export default function WrappedApp() {
 
 function App() {
   const [nav, setNav] = useState(0); // 0 - "pay", 1 - "register"
+
+  const {
+    kit,
+    address,
+    network,
+    connect,
+    supportsFeeCurrency,
+    disconnect,
+    performActions,
+    walletType,
+    feeCurrency,
+    updateFeeCurrency,
+    updateTheme,
+  } = useCelo();
+
+  debugger;
 
   return (
     <div className={`${s.container} ${nav && s.darkBg}`}>
@@ -36,7 +57,7 @@ function App() {
           <div className={s.logo}>
             <Image src="/carbonpay-logo.png" width="256px" height="64px" layout="fixed" />
           </div>
-          <div className={s.btnSection}><button className={s.btn}>Connect Wallet</button></div>
+          {address ? <div className={s.btnSection}><button onClick={disconnect} className={s.btn}>Disconnect</button></div> : <div className={s.btnSection}><button onClick={connect} className={s.btn}>Connect Wallet</button></div>}
         </div>
       </header>
       <div className={s.content}>
