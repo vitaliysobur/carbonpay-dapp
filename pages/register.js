@@ -23,10 +23,10 @@ export default function Pay() {
   const register = async name => {
     let accounts = await kit.contracts.getAccounts();
     kit.defaultAccount = accounts[0];
-    let contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0xDfE3393E5E586b794Ad9024D98DEB33eE0523504');
+    let contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0x7D70EE9141480F73FB42EF34Fb6Cb925ac244827');
     try {
-      await contract.methods.safeMint('0xf882C7DAd40Bdf2f275375d31905d5753933b920', name).estimateGas();
-      await contract.methods.safeMint('0xf882C7DAd40Bdf2f275375d31905d5753933b920', name).send({ from: address });
+      await contract.methods.safeMint(address, name).estimateGas();
+      await contract.methods.safeMint(address, name).send({ from: address });
       router.push('/profile');
     } catch(err) {
       debugger;

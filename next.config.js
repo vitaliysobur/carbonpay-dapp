@@ -11,6 +11,9 @@ const nextConfig = {
 
         return config;
     },
+    images: {
+        domains: ['ipfs.io'],
+    },
     // async redirects() {
     //     return [
     //         {

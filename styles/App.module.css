@@ -159,7 +159,96 @@
   text-align: right;
 }
 
+.profileWrap {
+  display: flex;
+  width: 100%;
+  max-width: 1240px;
+  flex-direction: row;
+  align-items: top;
+}
+
+.profileDetails {
+  padding: 20px;
+  flex: 2
+}
+
+.nftWrap {
+  flex: 1
+}
+
+.nft {
+  border-radius: 10px;
+  overflow: hidden;
+  width: 384px;
+  height: 522px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.profileTitle {
+  color: #fff;
+  font-size: 32px;
+  margin: 0;
+  padding: 0;
+}
+
+.profileStats {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 10px 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.profileStats li {
+  margin-right: 20px;
+}
+
+.profileStats li span {
+  vertical-align: top;
+}
+
+.offset {
+  font-size: 26px;
+  color: #DCBF52;
+}
+
+.offsetTitle {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.transactions {
+  padding: 20px 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+.transactions header {
+  padding: 0 20px 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.transactions header span {
+  padding-right: 10px;
+}
+
+.transactions section {
+  display: flex;
+  align-items: center;
+  min-height: 250px;
+  width: 100%;
+}
+
+.transactions section div {
+  width: 100%;
+  text-align: center;
+}
+
 @media (max-width: 1115px) {
+  .profileWrap {
+    flex-direction: column;
+  }
   .profileLink {
     text-align: center;
   }

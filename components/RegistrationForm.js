@@ -16,10 +16,13 @@ export default ({
     let contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, address);
 
     try {
+      const accounts = await kit.contracts.getAccounts();
+      kit.defaultAccount = accounts[0]
       await contract.methods.safeMint(address, name).estimateGas();
       await contract.methods.safeMint(address, name).send({ from: address });
       router.push('/merchant');
     } catch(err) {
+      console.log(err);
       if (/4001/.test(err)) {
         console.log('Rejected');
       } else {

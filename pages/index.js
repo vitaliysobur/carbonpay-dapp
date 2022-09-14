@@ -18,7 +18,7 @@ export default function Pay() {
   
   const isRegistered = async () => {
     if (!wallet.address) return false;
-    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0xDfE3393E5E586b794Ad9024D98DEB33eE0523504');
+    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0x7D70EE9141480F73FB42EF34Fb6Cb925ac244827');
     const balance = await contract.methods.balanceOf(wallet.address).call();
     return balance > 0;
   }
