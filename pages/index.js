@@ -1,116 +1,48 @@
-import React, { useState } from 'react'
-import Head from 'next/head'
-import Image from 'next/image'
-import s from '../styles/App.module.css'
-import { CeloProvider, Alfajores, useCelo } from '@celo/react-celo';
+import React, { useState, useEffect } from 'react';
+import Head from '../components/Head';
+import Header from '../components/Header';
+import s from '../styles/App.module.css';
 import '@celo/react-celo/lib/styles.css';
+import { useRouter } from 'next/router';
+import { useWallet } from '../hooks/useWallet';
+import PaymentForm from '../components/PaymentForm';
+import RegistrationForm from '../components/RegistrationForm';
+import { useCelo } from '@celo/react-celo';
+import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
 
-export default function WrappedApp() {
-  return (
-    <CeloProvider
-      dapp={{
-        name: 'CarbonPay',
-        description: 'Fight climate change by doing whatever you do best',
-        url: 'https://example.com',
-      }}
-      defaultNetwork={Alfajores.name}
-      connectModal={{
-        title: <span>Connect your Wallet</span>,
-        providersOptions: { searchable: true }
-      }}
-    >
-      <App/>
-    </CeloProvider>
-  )
-}
-
-function App() {
+export default function Pay() {
   const [nav, setNav] = useState(0); // 0 - "pay", 1 - "register"
+  const [registered, setRegistered] = useState(false);
+  const router = useRouter();
+  const { kit } = useCelo();
+  const wallet = useWallet();
 
-  const {
-    kit,
-    address,
-    network,
-    connect,
-    supportsFeeCurrency,
-    disconnect,
-    performActions,
-    walletType,
-    feeCurrency,
-    updateFeeCurrency,
-    updateTheme,
-  } = useCelo();
+  const isRegistered = async () => {
+    if (!wallet.address) return;
 
-  debugger;
+    const accounts = await kit.contracts.getAccounts();
+    kit.defaultAccount = accounts[0];
+    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0xDfE3393E5E586b794Ad9024D98DEB33eE0523504');
+    return !!(await contract.methods.balanceOf(kit.defaultAccount.address));
+  }
+
+  useEffect(() => {
+    isRegistered() ? setRegistered(true) : isRegistered(false)
+  }, [wallet.address]);
 
   return (
     <div className={`${s.container} ${nav && s.darkBg}`}>
-    <Head>
-      <title>CarbonPay</title>
-      <meta name="description" content="Fight climate change by doing whatever you do best" />
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
-
-    <main className={`${s.main}`}>
-      <header className={s.header}>
-        <div className={s.headerInner}>
-          <div className={s.logo}>
-            <Image src="/carbonpay-logo.png" width="256px" height="64px" layout="fixed" />
-          </div>
-          {address ? <div className={s.btnSection}><button onClick={disconnect} className={s.btn}>Disconnect</button></div> : <div className={s.btnSection}><button onClick={connect} className={s.btn}>Connect Wallet</button></div>}
+      <Head />
+      <main className={`${s.main}`}>
+        <Header {...wallet} registered={registered} />
+        <div className={s.content}>
+          <ul className={s.nav}>
+            <li className={`${s.navItem} ${!nav && s.navItemSelected}`}><a onClick={() => setNav(0)} href="#pay">Pay</a></li>
+            {!registered && <li className={`${s.navItem} ${s.registerItem}  ${nav && s.navItemSelected}`}><a href="#register" onClick={() => setNav(1)}>Register Merchant</a></li>}
+          </ul>
+          {!nav ? <PaymentForm /> : <RegistrationForm {...wallet} />}
         </div>
-      </header>
-      <div className={s.content}>
-        <ul className={s.nav}>
-          <li className={`${s.navItem} ${s.navItemFirst} ${!nav && s.navItemSelected}`}><a onClick={() => setNav(0)} href="#pay">Pay</a></li>
-          <li className={`${s.navItem} ${nav && s.navItemSelected}`}><a href="#register" onClick={() => setNav(1)}>Register Merchant</a></li>
-        </ul>
-
-        {!nav ? <div className={s.formWrap}>
-          <div className={s.formControl}>
-            <label className={s.label}>Merchant ID</label>
-            <div className={s.inputWrap}>
-              <input placeholder="0x..." className={s.input} type="text" />
-              <div className={s.subLabel}>
-                Jen's Bakery
-              </div>
-            </div>
-          </div>
-          <div className={s.formControl}>
-            <label className={s.label}>Payment Amount</label>
-            <div className={s.inputWrap}>
-              <input placeholder="0" className={s.input} type="text" />
-              <div className={s.subLabel}>
-                $4.79 USD
-              </div>
-            </div>
-          </div>
-          <div className={s.formControl}>
-            <label className={s.label}>Gas Fee</label>
-            <div className={`${s.subLabel} ${s.subLabelLarge}`}>+0.05 CELO</div>
-          </div>
-          <button className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
-        </div>
-          :
-        <div className={s.formWrap}>
-          <div className={s.formControl}>
-            <label className={s.label}>Merchant Name</label>
-            <div className={s.inputWrap}>
-              <input placeholder="Jen's Bakery" className={s.input} type="text" />
-            </div>
-          </div>
-          <div className={s.formControl}>
-            <label className={s.label}>Minting Fee</label>
-            <div className={`${s.subLabel} ${s.subLabelLarge}`}>+5 CELO</div>
-          </div>
-          <div className={s.formControl}>
-            <label className={s.label}>Gas Fee</label>
-            <div className={`${s.subLabel} ${s.subLabelLarge}`}>+0.05 CELO</div>
-          </div>
-          <button className={`${s.btn} ${s.btnLarge}`}>Mint carbonNFT</button>
-        </div>}
-      </div>
-    </main>
-  </div>
+      </main>
+    </div>
   )
 }

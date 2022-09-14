@@ -28,7 +28,7 @@
 .headerInner {
   display: grid;
   padding: 0;
-  grid-template-columns: 1fr 150px;
+  grid-template-columns: 1fr 100px 150px;
   -webkit-box-pack: justify;
   justify-content: space-between;
   -webkit-box-align: center;
@@ -96,8 +96,8 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
-.navItemFirst {
-  border-right: 2px solid rgba(255, 255, 255, 0.3);
+.registerItem {
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .navItemSelected {
@@ -153,7 +153,15 @@
   font-size: 18px;
 }
 
+.profileLink {
+  color: #fff;
+  font-size: 18px;
+}
+
 @media (max-width: 1115px) {
+  .profileLink {
+    text-align: center;
+  }
   .btnSection {
     flex-direction: row;
     -webkit-box-pack: justify;
