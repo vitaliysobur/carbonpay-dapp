@@ -13,21 +13,20 @@ import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
 export default function Pay() {
   const [nav, setNav] = useState(0); // 0 - "pay", 1 - "register"
   const [registered, setRegistered] = useState(false);
-  const router = useRouter();
   const { kit } = useCelo();
   const wallet = useWallet();
-
+  
   const isRegistered = async () => {
-    if (!wallet.address) return;
-
-    const accounts = await kit.contracts.getAccounts();
-    kit.defaultAccount = accounts[0];
+    if (!wallet.address) return false;
     const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0xDfE3393E5E586b794Ad9024D98DEB33eE0523504');
-    return !!(await contract.methods.balanceOf(kit.defaultAccount.address));
+    const balance = await contract.methods.balanceOf(wallet.address).call();
+    return balance > 0;
   }
 
   useEffect(() => {
-    isRegistered() ? setRegistered(true) : isRegistered(false)
+    (async () => {
+      await isRegistered() ? setRegistered(true) : setRegistered(false);
+    })()
   }, [wallet.address]);
 
   return (

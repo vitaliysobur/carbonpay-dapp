@@ -1,10 +1,10 @@
 import s from '../styles/App.module.css';
+import Link from 'next/link';
 import Image from 'next/image';
 
 export default ({
   address,
   connect,
-  disconnect,
   registered
 }) => {
   return (
@@ -13,8 +13,8 @@ export default ({
         <div className={s.logo}>
           <Image src="/carbonpay-logo.png" width="256px" height="64px" layout="fixed" />
         </div>
-        {registered && <a className={s.profileLink} href="#profile">Profile</a>}
-        {address ? <div className={s.btnSection}><button onClick={disconnect} className={s.btn}>Disconnect</button></div> : <div className={s.btnSection}><button onClick={connect} className={s.btn}>Connect Wallet</button></div>}
+        {!address && <div className={s.btnSection}><button onClick={connect} className={s.btn}>Connect Wallet</button></div>}
+        {registered && <Link href="/merchant"><a className={s.profileLink}>Profile</a></Link>}
       </div>
     </header>
   );

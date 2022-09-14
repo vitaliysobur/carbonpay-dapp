@@ -28,7 +28,7 @@
 .headerInner {
   display: grid;
   padding: 0;
-  grid-template-columns: 1fr 100px 150px;
+  grid-template-columns: 1fr 150px;
   -webkit-box-pack: justify;
   justify-content: space-between;
   -webkit-box-align: center;
@@ -156,6 +156,7 @@
 .profileLink {
   color: #fff;
   font-size: 18px;
+  text-align: right;
 }
 
 @media (max-width: 1115px) {

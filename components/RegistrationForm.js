@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useRouter } from 'next/router';
 import { useCelo } from '@celo/react-celo';
 import s from '../styles/App.module.css';
 import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
@@ -9,18 +10,21 @@ export default ({
 }) => {
   const { kit } = useCelo();
   const merchantInput = useRef(null);
+  const router = useRouter();
 
   const register = async name => {
-    let accounts = await kit.contracts.getAccounts();
-    kit.defaultAccount = accounts[0];
     let contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, address);
+
     try {
       await contract.methods.safeMint(address, name).estimateGas();
       await contract.methods.safeMint(address, name).send({ from: address });
       router.push('/merchant');
     } catch(err) {
-      !address && connect();
-      router.push('/merchant');
+      if (/4001/.test(err)) {
+        console.log('Rejected');
+      } else {
+        !address && await connect();
+      }
     }
   }
 

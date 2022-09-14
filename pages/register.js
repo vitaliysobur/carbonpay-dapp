@@ -16,6 +16,7 @@ export default function Pay() {
     connect,
     disconnect
   } = useWallet();
+  console.log('ADDRESS::: ', address);
   const merchantInput = useRef(null);
   const router = useRouter();
 
@@ -26,11 +27,11 @@ export default function Pay() {
     try {
       await contract.methods.safeMint('0xf882C7DAd40Bdf2f275375d31905d5753933b920', name).estimateGas();
       await contract.methods.safeMint('0xf882C7DAd40Bdf2f275375d31905d5753933b920', name).send({ from: address });
-      router.push('/merchant');
+      router.push('/profile');
     } catch(err) {
       debugger;
       !address && connect();
-      router.push('/merchant');
+      router.push('/profile');
     }
   }
 
