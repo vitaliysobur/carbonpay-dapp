@@ -1,8 +1,32 @@
-import React from 'react';
-import s from '../styles/App.module.css'
-import '@celo/react-celo/lib/styles.css';
+import React, { useRef } from 'react';
+import { useRouter } from 'next/router';
+import { useCelo } from '@celo/react-celo';
+import s from '../styles/App.module.css';
+import carbonPayProcessorAbi from '../abi/CarbonPayProcessor.json';
 
-export default () => {
+export default ({
+  address,
+  connect
+}) => {
+  const { kit } = useCelo();
+  const merchantInput = useRef(null);
+  const router = useRouter();
+
+  const pay = async name => {
+    try {
+      const contract = new kit.connection.web3.eth.Contract(carbonPayProcessorAbi, '0xaBE5396aBE4ab331e1B9594D60966b2259210Bf9');
+      await contract.methods.pay(address, '0xE8e180C9136B8A180cE056773041b76E72178752', kit.connection.web3.utils.toWei('10', 'ether')).send({ from: address });
+      // router.push('/merchant');
+    } catch(err) {
+      console.log(err);
+      if (/4001/.test(err)) {
+        console.log('Rejected');
+      } else {
+        !address && await connect();
+      }
+    }
+  }
+
   return (
     <div className={s.formWrap}>
       <div className={s.formControl}>
@@ -27,7 +51,7 @@ export default () => {
         <label className={s.label}>Gas Fee</label>
         <div className={`${s.subLabel} ${s.subLabelLarge}`}>+0.05 CELO</div>
       </div>
-      <button className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
+      <button onClick={pay} className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
     </div>
   )
 }

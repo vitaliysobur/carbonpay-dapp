@@ -39,7 +39,7 @@ export default function Pay() {
             <li className={`${s.navItem} ${!nav && s.navItemSelected}`}><a onClick={() => setNav(0)} href="#pay">Pay</a></li>
             {!registered && <li className={`${s.navItem} ${s.registerItem}  ${nav && s.navItemSelected}`}><a href="#register" onClick={() => setNav(1)}>Register Merchant</a></li>}
           </ul>
-          {!nav ? <PaymentForm /> : <RegistrationForm {...wallet} />}
+          {!nav ? <PaymentForm {...wallet} /> : <RegistrationForm {...wallet} />}
         </div>
       </main>
     </div>
