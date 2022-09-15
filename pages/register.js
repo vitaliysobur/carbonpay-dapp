@@ -21,13 +21,15 @@ export default function Pay() {
   const router = useRouter();
 
   const register = async name => {
+    debugger;
     let accounts = await kit.contracts.getAccounts();
     kit.defaultAccount = accounts[0];
     let contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0x7D70EE9141480F73FB42EF34Fb6Cb925ac244827');
+
     try {
       await contract.methods.safeMint(address, name).estimateGas();
       await contract.methods.safeMint(address, name).send({ from: address });
-      router.push('/profile');
+      // router.push('/profile');
     } catch(err) {
       debugger;
       !address && connect();

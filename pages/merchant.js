@@ -55,7 +55,7 @@ export default function Pay() {
             {!registered && <li className={`${s.navItem} ${s.registerItem}  ${nav && s.navItemSelected}`}><a href="#register" onClick={() => setNav(1)}>Register Merchant</a></li>}
           </ul>
           {!registered && <RegistrationForm {...wallet} />}
-          <div className={s.profileWrap}>
+          {registered && <div className={s.profileWrap}>
             <div className={s.nftWrap}>
               <div className={s.nft}>
                 <Image src='/nft.png' width="384" height="522" />
@@ -76,7 +76,7 @@ export default function Pay() {
                 </section>
               </div>
             </div>
-          </div>
+          </div>}
         </div>
       </main>
     </div>

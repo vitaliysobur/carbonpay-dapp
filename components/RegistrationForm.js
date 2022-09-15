@@ -13,12 +13,9 @@ export default ({
   const router = useRouter();
 
   const register = async name => {
-    let contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, address);
-
     try {
-      const accounts = await kit.contracts.getAccounts();
-      kit.defaultAccount = accounts[0]
-      await contract.methods.safeMint(address, name).estimateGas();
+      const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0x7D70EE9141480F73FB42EF34Fb6Cb925ac244827');
+      console.log(await contract.methods.safeMint(address, name).estimateGas());
       await contract.methods.safeMint(address, name).send({ from: address });
       router.push('/merchant');
     } catch(err) {
