@@ -4,32 +4,27 @@ import { useRouter } from 'next/router';
 import { useCelo } from '@celo/react-celo';
 import s from '../styles/App.module.css';
 import carbonPayProcessorAbi from '../abi/CarbonPayProcessor.json';
+import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
 import c from '../constants/constants';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-console.log(c);
 
 export default ({
   address,
   connect
 }) => {
   const { kit } = useCelo();
-  const merchantInput = useRef(null);
-  const router = useRouter();
   const [gas, setGas] = useState(0);
   const [name, setName] = useState('');
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [transactionHash, setTransactionHash] = useState(false);
   const merchantIdInput = useRef();
   const paymentAmountInput = useRef();
   const paymentProcessorContract = new kit.connection.web3.eth.Contract(carbonPayProcessorAbi, c.PAY_PROCESSOR_ADDRESS);
-  const nftContract = new kit.connection.web3.eth.Contract(carbonPayProcessorAbi, c.NFT_CONTRACT_ADDRESS);
+  const nftContract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, c.NFT_CONTRACT_ADDRESS);
 
   useEffect(() => {
     (async () => {
       const gasPrice = await kit.connection.web3.eth.getGasPrice();
-      const gasEstimate = await paymentProcessorContract.methods.pay(address, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei('1', 'ether')).estimateGas();
+      const gasEstimate = await paymentProcessorContract.methods.pay(address, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei('0', 'ether')).estimateGas();
       const gas = (gasPrice * gasEstimate) / (10 ** 18);
       setGas(gas);
     })()
@@ -46,7 +41,7 @@ export default ({
   const pay = async (merchantAddress, amount) => {
     try {
       await paymentProcessorContract.methods.pay(merchantAddress, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei(amount, 'ether')).send({ from: address }).on('transactionHash', function(hash) {
-        toast.info(getTransactionLink(hash));
+        // toast.info(() => getTransactionLink(hash));
       });
     } catch(err) {
       console.log(err);
@@ -64,7 +59,7 @@ export default ({
 
   const getMerchantName = async address => {
     const tokenId = await nftContract.methods.getTokenIdByAddress(address).call();
-    const name = await nftContract.methods.attributes(tokenId).name;
+    const name = (await nftContract.methods.attributes(tokenId).call()).name;
 
     return name;
   }
@@ -75,7 +70,7 @@ export default ({
     };
 
     try {
-      const name = await getMerchantName();
+      const name = await getMerchantName(address);
       setName(name);
     } catch(err) {
       console.log(err);
@@ -87,9 +82,6 @@ export default ({
     <div className={s.formWrap}>
       <ToastContainer
         position="top-center"
-        autoClose={5000}
-        pauseOnHover
-        pauseOnFocusLoss
       />
       <div className={s.formControl}>
         <label className={s.label}>Merchant ID</label>
