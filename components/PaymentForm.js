@@ -41,7 +41,7 @@ export default ({
   const pay = async (merchantAddress, amount) => {
     try {
       await paymentProcessorContract.methods.pay(merchantAddress, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei(amount, 'ether')).send({ from: address }).on('transactionHash', function(hash) {
-        // toast.info(() => getTransactionLink(hash));
+        toast.info(() => getTransactionLink(hash));
       });
     } catch(err) {
       console.log(err);

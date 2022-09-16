@@ -9,6 +9,7 @@ import PaymentForm from '../components/PaymentForm';
 import RegistrationForm from '../components/RegistrationForm';
 import { useCelo } from '@celo/react-celo';
 import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
+import c from '../constants/constants';
 
 export default function Pay() {
   const [nav, setNav] = useState(0); // 0 - "pay", 1 - "register"
@@ -18,7 +19,7 @@ export default function Pay() {
   
   const isRegistered = async () => {
     if (!wallet.address) return false;
-    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0x7D70EE9141480F73FB42EF34Fb6Cb925ac244827');
+    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, c.NFT_CONTRACT_ADDRESS);
     const balance = await contract.methods.balanceOf(wallet.address).call();
     return balance > 0;
   }
