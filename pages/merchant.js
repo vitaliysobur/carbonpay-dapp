@@ -68,7 +68,7 @@ export default function Pay() {
                 <li><AiFillEye fontSize="20px" /> <span>13,177 views</span></li>
                 <li><AiFillHeart fontSize="20px" /> <span>6003 favorite</span></li>
               </ul>
-              <h3 className={s.offset}><span className={s.offsetTitle}>Total CO2 offset:</span> {metadata?.attributes[0].value} tone</h3>
+              <h3 className={s.offset}><span className={s.offsetTitle}>Total CO2 offset:</span> {metadata?.attributes[0].value} tons</h3>
               <div className={s.transactions}>
                 <header><span><BiStats fontSize="20px" /></span><span>Offset History</span></header>
                 <section>

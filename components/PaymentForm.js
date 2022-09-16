@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
+import {Link} from 'next/link';
 import { useRouter } from 'next/router';
 import { useCelo } from '@celo/react-celo';
 import s from '../styles/App.module.css';
 import carbonPayProcessorAbi from '../abi/CarbonPayProcessor.json';
+import c from '../constants/constants';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+console.log(c);
 
 export default ({
   address,
@@ -12,47 +18,92 @@ export default ({
   const merchantInput = useRef(null);
   const router = useRouter();
   const [gas, setGas] = useState(0);
+  const [name, setName] = useState('');
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [transactionHash, setTransactionHash] = useState(false);
+  const merchantIdInput = useRef();
+  const paymentAmountInput = useRef();
+  const paymentProcessorContract = new kit.connection.web3.eth.Contract(carbonPayProcessorAbi, c.PAY_PROCESSOR_ADDRESS);
+  const nftContract = new kit.connection.web3.eth.Contract(carbonPayProcessorAbi, c.NFT_CONTRACT_ADDRESS);
 
   useEffect(() => {
     (async () => {
-      const contract = new kit.connection.web3.eth.Contract(carbonPayProcessorAbi, '0xaBE5396aBE4ab331e1B9594D60966b2259210Bf9');
       const gasPrice = await kit.connection.web3.eth.getGasPrice();
-      const gasEstimate = await contract.methods.pay(address, '0xE8e180C9136B8A180cE056773041b76E72178752', kit.connection.web3.utils.toWei('10', 'ether')).estimateGas();
+      const gasEstimate = await paymentProcessorContract.methods.pay(address, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei('1', 'ether')).estimateGas();
       const gas = (gasPrice * gasEstimate) / (10 ** 18);
       setGas(gas);
     })()
   }, [address]);
 
-  const pay = async name => {
+  const getTransactionLink = hash => {
+    return (
+      <div>
+        <Link href={`https://alfajores-blockscout.celo-testnet.org/tx/${hash}/token-transfers`}>Payment receipt</Link>
+      </div>
+    )
+  }
+
+  const pay = async (merchantAddress, amount) => {
     try {
-      const contract = new kit.connection.web3.eth.Contract(carbonPayProcessorAbi, '0xaBE5396aBE4ab331e1B9594D60966b2259210Bf9');
-      await contract.methods.pay(address, '0xE8e180C9136B8A180cE056773041b76E72178752', kit.connection.web3.utils.toWei('10', 'ether')).send({ from: address });
+      await paymentProcessorContract.methods.pay(merchantAddress, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei(amount, 'ether')).send({ from: address }).on('transactionHash', function(hash) {
+        toast.info(getTransactionLink(hash));
+      });
     } catch(err) {
       console.log(err);
       if (/4001/.test(err)) {
         console.log('Rejected');
       } else {
-        debugger;
         !address && await connect();
       }
+    }
+  };
+
+  const isValidAddress = address => {
+    return kit.connection.web3.utils.isAddress(address);
+  }
+
+  const getMerchantName = async address => {
+    const tokenId = await nftContract.methods.getTokenIdByAddress(address).call();
+    const name = await nftContract.methods.attributes(tokenId).name;
+
+    return name;
+  }
+
+  const showName = async address => {
+    if (!isValidAddress(address)) {
+      return setName('');
+    };
+
+    try {
+      const name = await getMerchantName();
+      setName(name);
+    } catch(err) {
+      console.log(err);
+      setName('');
     }
   }
 
   return (
     <div className={s.formWrap}>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        pauseOnHover
+        pauseOnFocusLoss
+      />
       <div className={s.formControl}>
         <label className={s.label}>Merchant ID</label>
         <div className={s.inputWrap}>
-          <input placeholder="0x..." className={s.input} type="text" />
+          <input ref={merchantIdInput} onBlur={() => showName(merchantIdInput.current.value)} placeholder="0x..." className={s.input} type="text" />
           <div className={s.subLabel}>
-            Jen's Bakery
+            {name}
           </div>
         </div>
       </div>
       <div className={s.formControl}>
         <label className={s.label}>Payment Amount</label>
         <div className={s.inputWrap}>
-          <input placeholder="0" className={s.input} type="text" />
+          <input ref={paymentAmountInput} placeholder="0" className={s.input} type="text" />
           <div className={s.subLabel}>
             $4.79 USD
           </div>
@@ -62,7 +113,7 @@ export default ({
         <label className={s.label}>Gas Fee</label>
         <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
       </div>
-      <button onClick={pay} className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
+      <button onClick={() => pay(merchantIdInput.current.value, paymentAmountInput.current.value)} className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
     </div>
   )
 }
