@@ -6,15 +6,15 @@ import Header from '../components/Header';
 import s from '../styles/App.module.css';
 import '@celo/react-celo/lib/styles.css';
 import { useWallet } from '../hooks/useWallet';
-import PaymentForm from '../components/PaymentForm';
 import RegistrationForm from '../components/RegistrationForm';
 import { useCelo } from '@celo/react-celo';
 import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
 import { AiFillEye, AiFillHeart } from 'react-icons/ai';
 import { BiStats } from 'react-icons/bi';
+import c from '../constants/constants';
 
 export default function Pay() {
-  const [nav, setNav] = useState(0); // 0 - "pay", 1 - "register"
+  const [nav, setNav] = useState(0);
   const [registered, setRegistered] = useState(false);
   const [metadata, setMetadata] = useState(null);
   const { kit } = useCelo();
@@ -22,14 +22,14 @@ export default function Pay() {
   
   const isRegistered = async () => {
     if (!wallet.address) return false;
-    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0x7D70EE9141480F73FB42EF34Fb6Cb925ac244827');
+    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, c.NFT_CONTRACT_ADDRESS);
     const balance = await contract.methods.balanceOf(wallet.address).call();
     return balance > 0;
   }
 
   const getNftMetadata = async () => {
     if (!wallet.address) return null;
-    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0x7D70EE9141480F73FB42EF34Fb6Cb925ac244827');
+    const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, c.NFT_CONTRACT_ADDRESS);
     const tokenId = await contract.methods.getTokenIdByAddress(wallet.address).call();
     const metadata = await contract.methods.tokenURI(tokenId).call();
     const json = atob(metadata.substring(29));
@@ -68,7 +68,7 @@ export default function Pay() {
                 <li><AiFillEye fontSize="20px" /> <span>13,177 views</span></li>
                 <li><AiFillHeart fontSize="20px" /> <span>6003 favorite</span></li>
               </ul>
-              <h3 className={s.offset}><span className={s.offsetTitle}>Total CO2 offset:</span> {metadata?.attributes[0].value} tone</h3>
+              <h3 className={s.offset}><span className={s.offsetTitle}>Total CO2 offset:</span> {metadata?.attributes[0].value} tons</h3>
               <div className={s.transactions}>
                 <header><span><BiStats fontSize="20px" /></span><span>Offset History</span></header>
                 <section>

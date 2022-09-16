@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useCelo } from '@celo/react-celo';
 import s from '../styles/App.module.css';
 import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
+import c from '../constants/constants';
 
 export default ({
   address,
@@ -14,7 +15,7 @@ export default ({
 
   const register = async name => {
     try {
-      const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, '0x7D70EE9141480F73FB42EF34Fb6Cb925ac244827');
+      const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, c.NFT_CONTRACT_ADDRESS);
       console.log(await contract.methods.safeMint(address, name).estimateGas());
       await contract.methods.safeMint(address, name).send({ from: address });
       router.push('/merchant');
