@@ -23,10 +23,12 @@ export default ({
 
   useEffect(() => {
     (async () => {
-      const gasPrice = await kit.connection.web3.eth.getGasPrice();
-      const gasEstimate = await paymentProcessorContract.methods.pay(address, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei('0', 'ether')).estimateGas();
-      const gas = (gasPrice * gasEstimate) / (10 ** 18);
-      setGas(gas);
+      if (address) {
+        const gasPrice = await kit.connection.web3.eth.getGasPrice();
+        const gasEstimate = await paymentProcessorContract.methods.pay(address, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei('0', 'ether')).estimateGas();
+        const gas = (gasPrice * gasEstimate) / (10 ** 18);
+        setGas(gas);
+      }
     })()
   }, [address]);
 
