@@ -121,6 +121,7 @@
 }
 
 .inputWrap {
+  position: relative;
   width: 100%;
   padding: 10px 20px;
   background: rgba(33, 33, 33, 0.6);
@@ -134,7 +135,15 @@
   border: none;
   background: transparent;
   outline: none;
-  color: #fff;
+  color: #cacaca;
+  font-weight: bold;
+}
+
+.tokenName {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 22px;
   font-weight: bold;
 }
 

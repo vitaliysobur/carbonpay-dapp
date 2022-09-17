@@ -16,7 +16,7 @@ export default ({
           </a>
         </Link>
         {!address && <div className={s.btnSection}><button onClick={connect} className={s.btn}>Connect Wallet</button></div>}
-        {registered && <Link href="/merchant"><a className={s.profileLink}>Profile</a></Link>}
+        {/* {registered && <Link href="/merchant"><a className={s.profileLink}>Profile</a></Link>} */}
       </div>
     </header>
   );

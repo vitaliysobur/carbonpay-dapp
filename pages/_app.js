@@ -2,7 +2,6 @@ import { CeloProvider, Alfajores } from '@celo/react-celo';
 import '../styles/globals.css'
 
 const CarbonPay = ({ Component, pageProps }) => {
-
   return (
     <CeloProvider
       dapp={{

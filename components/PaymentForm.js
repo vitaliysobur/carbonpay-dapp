@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {Link} from 'next/link';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useCelo } from '@celo/react-celo';
 import s from '../styles/App.module.css';
 import carbonPayProcessorAbi from '../abi/CarbonPayProcessor.json';
@@ -13,6 +13,7 @@ export default ({
   address,
   connect
 }) => {
+  const router = useRouter();
   const { kit } = useCelo();
   const [gas, setGas] = useState(0);
   const [name, setName] = useState('');
@@ -43,7 +44,8 @@ export default ({
   const pay = async (merchantAddress, amount) => {
     try {
       await paymentProcessorContract.methods.pay(merchantAddress, c.TOKEN_ADDRESS, kit.connection.web3.utils.toWei(amount, 'ether')).send({ from: address }).on('transactionHash', function(hash) {
-        toast.info(() => getTransactionLink(hash));
+        // toast.info(() => getTransactionLink(hash));
+        router.push(`https://www.metamate-demo.com/order-confirmation/index.html?hash=${hash}`);
       });
     } catch(err) {
       console.log(err);
@@ -88,18 +90,19 @@ export default ({
       <div className={s.formControl}>
         <label className={s.label}>Merchant ID</label>
         <div className={s.inputWrap}>
-          <input ref={merchantIdInput} onBlur={() => showName(merchantIdInput.current.value)} placeholder="0x..." className={s.input} type="text" />
+          <input disabled="true" defaultValue="0xf88...b920" ref={merchantIdInput} onBlur={() => showName(merchantIdInput.current.value)} placeholder="0x..." className={s.input} type="text" />
           <div className={s.subLabel}>
-            {name}
+            (A) eStore
           </div>
         </div>
       </div>
       <div className={s.formControl}>
         <label className={s.label}>Payment Amount</label>
         <div className={s.inputWrap}>
-          <input ref={paymentAmountInput} placeholder="0" className={s.input} type="text" />
+          <input defaultValue="19.92" ref={paymentAmountInput} placeholder="0" className={s.input} type="text" />
+          <div className={s.tokenName}>CO2</div>
           <div className={s.subLabel}>
-            $4.79 USD
+            $24.99
           </div>
         </div>
       </div>
@@ -107,7 +110,7 @@ export default ({
         <label className={s.label}>Gas Fee</label>
         <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
       </div>
-      <button onClick={() => pay(merchantIdInput.current.value, paymentAmountInput.current.value)} className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
+      <button onClick={() => pay('0xf882C7DAd40Bdf2f275375d31905d5753933b920', '19.92')} className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
     </div>
   )
 }
