@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useCelo } from '@celo/react-celo';
 import s from '../styles/App.module.css';
@@ -10,13 +10,13 @@ const RegistrationForm = ({
   connect
 }) => {
   const { kit } = useCelo();
+  const [gas, setGas] = useState(0);
   const merchantInput = useRef(null);
   const router = useRouter();
+  const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, c.NFT_CONTRACT_ADDRESS);
 
   const register = async name => {
     try {
-      const contract = new kit.connection.web3.eth.Contract(carbonPayNftAbi, c.NFT_CONTRACT_ADDRESS);
-      console.log(await contract.methods.safeMint(address, name).estimateGas());
       await contract.methods.safeMint(address, name).send({ from: address });
       router.push('/merchant');
     } catch(err) {
@@ -28,6 +28,17 @@ const RegistrationForm = ({
       }
     }
   }
+
+  useEffect(() => {
+    (async () => {
+      if (address) {
+        const gasPrice = await kit.connection.web3.eth.getGasPrice();
+        const gasEstimate = await contract.methods.safeMint(address, name).estimateGas();
+        const gas = (gasPrice * gasEstimate) / (10 ** 18);
+        setGas(gas);
+      }
+    })()
+  }, [address]);
 
   return (
     <div className={s.formWrap}>
@@ -43,7 +54,7 @@ const RegistrationForm = ({
       </div>
       <div className={s.formControl}>
         <label className={s.label}>Gas Fee</label>
-        <div className={`${s.subLabel} ${s.subLabelLarge}`}>+0.05 CELO</div>
+        <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
       </div>
       <button onClick={() => register(merchantInput.current.value)} className={`${s.btn} ${s.btnLarge}`}>Mint carbonNFT</button>
     </div>
