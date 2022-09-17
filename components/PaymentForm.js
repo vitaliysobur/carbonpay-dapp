@@ -110,7 +110,7 @@ export default function PaymentForm({
         <label className={s.label}>Gas Fee</label>
         <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
       </div>
-      <button onClick={() => pay('0xf882C7DAd40Bdf2f275375d31905d5753933b920', '19.92')} className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
+      <button onClick={() => pay('0xf882C7DAd40Bdf2f275375d31905d5753933b920', 7)} className={`${s.btn} ${s.btnLarge}`}>Authorise Transaction</button>
     </div>
   )
 }
