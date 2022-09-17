@@ -2,11 +2,11 @@ import s from '../styles/App.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default ({
+export default function Header ({
   address,
   connect,
   registered
-}) => {
+}) {
   return (
     <header className={s.header}>
       <div className={s.headerInner}>

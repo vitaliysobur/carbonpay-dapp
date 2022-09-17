@@ -5,10 +5,10 @@ import s from '../styles/App.module.css';
 import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
 import c from '../constants/constants';
 
-export default ({
+export default function RegistrationForm({
   address,
   connect
-}) => {
+}) {
   const { kit } = useCelo();
   const merchantInput = useRef(null);
   const router = useRouter();

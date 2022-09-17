@@ -28,7 +28,7 @@ export default function Pay() {
     (async () => {
       await isRegistered() ? setRegistered(true) : setRegistered(false);
     })()
-  }, [wallet.address]);
+  }, [wallet.address, isRegistered]);
 
   return (
     <div className={`${s.container} ${nav && s.darkBg}`}>

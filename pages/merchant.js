@@ -43,7 +43,7 @@ export default function Pay() {
       const metadata = await getNftMetadata();
       metadata ? setMetadata(metadata) : setMetadata(null);
     })()
-  }, [wallet.address]);
+  }, [wallet.address, isRegistered]);
 
   return (
     <div className={`${s.container} ${nav && s.darkBg}`}>

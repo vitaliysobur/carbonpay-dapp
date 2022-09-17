@@ -9,10 +9,10 @@ import c from '../constants/constants';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default ({
+export default function PaymentForm({
   address,
   connect
-}) => {
+}) {
   const router = useRouter();
   const { kit } = useCelo();
   const [gas, setGas] = useState(0);
