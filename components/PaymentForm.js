@@ -99,7 +99,7 @@ export default function PaymentForm({
       <div className={s.formControl}>
         <label className={s.label}>Payment Amount</label>
         <div className={s.inputWrap}>
-          <input defaultValue="19.92" ref={paymentAmountInput} placeholder="0" className={s.input} type="text" />
+          <input defaultValue="7 tons" ref={paymentAmountInput} placeholder="0" className={s.input} type="text" />
           <div className={s.tokenName}>CO2</div>
           <div className={s.subLabel}>
             $24.99
