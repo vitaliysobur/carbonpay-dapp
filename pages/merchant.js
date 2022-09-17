@@ -13,7 +13,7 @@ import { AiFillEye, AiFillHeart } from 'react-icons/ai';
 import { BiStats } from 'react-icons/bi';
 import c from '../constants/constants';
 
-export default function Pay() {
+export default function Profile() {
   const [nav, setNav] = useState(0);
   const [registered, setRegistered] = useState(false);
   const [metadata, setMetadata] = useState(null);

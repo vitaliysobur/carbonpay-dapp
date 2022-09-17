@@ -5,7 +5,7 @@ import s from '../styles/App.module.css';
 import carbonPayNftAbi from '../abi/CarbonPayNFT.json';
 import c from '../constants/constants';
 
-export default ({
+const RegistrationForm = ({
   address,
   connect
 }) => {
@@ -49,3 +49,5 @@ export default ({
     </div>
   );
 }
+
+export default RegistrationForm;

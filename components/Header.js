@@ -2,7 +2,7 @@ import s from '../styles/App.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default ({
+const Header = ({
   address,
   connect,
   registered
@@ -21,3 +21,5 @@ export default ({
     </header>
   );
 }
+
+export default Header;

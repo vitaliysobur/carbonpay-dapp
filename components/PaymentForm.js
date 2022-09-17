@@ -9,7 +9,7 @@ import c from '../constants/constants';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default ({
+const PaymentForm = ({
   address,
   connect
 }) => {
@@ -111,3 +111,5 @@ export default ({
     </div>
   )
 }
+
+export default PaymentForm;
