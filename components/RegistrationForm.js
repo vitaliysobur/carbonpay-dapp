@@ -48,10 +48,10 @@ const RegistrationForm = ({
           <input ref={merchantInput} placeholder="Jen's Bakery" className={s.input} type="text" />
         </div>
       </div>
-      <div className={s.formControl}>
+      {/* <div className={s.formControl}>
         <label className={s.label}>Minting Fee</label>
         <div className={`${s.subLabel} ${s.subLabelLarge}`}>+5 CELO</div>
-      </div>
+      </div> */}
       <div className={s.formControl}>
         <label className={s.label}>Gas Fee</label>
         <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
