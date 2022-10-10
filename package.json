@@ -19,6 +19,7 @@
     "react-toastify": "^9.0.8"
   },
   "devDependencies": {
+    "@types/atob": "^2.1.2",
     "@types/node": "^18.8.3",
     "@types/react": "^18.0.21",
     "eslint": "8.23.0",

@@ -1,7 +1,8 @@
+import { AppProps } from "next/app";
 import { CeloProvider, Alfajores } from "@celo/react-celo";
 import "../styles/globals.css";
 
-const CarbonPay = ({ Component, pageProps }) => {
+const CarbonPay = ({ Component, pageProps }: AppProps) => {
   return (
     <CeloProvider
       dapp={{
