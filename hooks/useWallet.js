@@ -1,11 +1,11 @@
-import { Alfajores, useCelo } from '@celo/react-celo';
+import { Alfajores, useCelo } from "@celo/react-celo";
 
 export const useWallet = () => {
   const {
     address,
     connect: connectFromHook,
     destroy,
-    network: walletNetwork
+    network: walletNetwork,
   } = useCelo();
 
   const network = Alfajores;
@@ -43,6 +43,6 @@ export const useWallet = () => {
     address,
     connect,
     disconnect,
-    wrongNetwork
+    wrongNetwork,
   };
 };
