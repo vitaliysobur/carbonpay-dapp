@@ -11,7 +11,7 @@ import { useCelo } from "@celo/react-celo";
 import carbonPayNftAbi from "../abi/CarbonPayNFT.json";
 import { AiFillEye, AiFillHeart } from "react-icons/ai";
 import { BiStats } from "react-icons/bi";
-import c from "../constants/constants";
+import { NFT_CONTRACT_ADDRESS } from "../constants/constants";
 
 export default function Merchant() {
   const [nav, setNav] = useState(0);
@@ -24,7 +24,7 @@ export default function Merchant() {
     if (!wallet.address) return false;
     const contract = new kit.connection.web3.eth.Contract(
       carbonPayNftAbi,
-      c.NFT_CONTRACT_ADDRESS
+      NFT_CONTRACT_ADDRESS
     );
     const balance = await contract.methods.balanceOf(wallet.address).call();
     return balance > 0;
@@ -34,7 +34,7 @@ export default function Merchant() {
     if (!wallet.address) return null;
     const contract = new kit.connection.web3.eth.Contract(
       carbonPayNftAbi,
-      c.NFT_CONTRACT_ADDRESS
+      NFT_CONTRACT_ADDRESS
     );
     const tokenId = await contract.methods
       .getTokenIdByAddress(wallet.address)
@@ -77,7 +77,7 @@ export default function Merchant() {
             <div className={s.profileWrap}>
               <div className={s.nftWrap}>
                 <div className={s.nft}>
-                  <Image src="/nft.png" width="384" height="522" />
+                  <Image src="/nft.png" width="384" height="522" alt="NFT" />
                 </div>
               </div>
               <div className={s.profileDetails}>

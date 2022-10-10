@@ -154,7 +154,7 @@ const PaymentForm = ({ address, connect }: IProps) => {
         }
         className={`${s.btn} ${s.btnLarge}`}
       >
-        Authorise Transaction
+        Authorize Transaction
       </button>
     </div>
   );

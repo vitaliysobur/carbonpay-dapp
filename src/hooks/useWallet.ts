@@ -1,4 +1,6 @@
-import { Alfajores, useCelo } from "@celo/react-celo";
+import { Alfajores, useCelo, Connector } from "@celo/react-celo";
+
+type Callback = () => Promise<Connector>;
 
 export const useWallet = () => {
   const {
@@ -11,7 +13,7 @@ export const useWallet = () => {
   const network = Alfajores;
   const wrongNetwork = network?.chainId !== walletNetwork?.chainId;
 
-  const connect = async (callback) => {
+  const connect = async (callback: Callback) => {
     try {
       await connectFromHook();
 

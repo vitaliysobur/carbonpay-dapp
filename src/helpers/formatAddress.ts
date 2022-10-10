@@ -1,4 +1,4 @@
-export const formatAddress = (address, limit) => {
+export const formatAddress = (address: string, limit: string) => {
   const startLimit = limit
     ? parseInt(limit[0], 10) || parseInt(limit, 10) || 0
     : 0;
