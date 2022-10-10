@@ -10,7 +10,7 @@ import { useCelo } from "@celo/react-celo";
 import carbonPayNftAbi from "../abi/CarbonPayNFT.json";
 import c from "../constants/constants";
 
-enum NavState {
+export enum NavState {
   Pay = 0,
   Register = 1,
 }
@@ -25,7 +25,7 @@ export default function IndexPage() {
     if (!wallet.address) return false;
 
     const contract = new kit.connection.web3.eth.Contract(
-      carbonPayNftAbi,
+      carbonPayNftAbi as AbiItem[],
       c.NFT_CONTRACT_ADDRESS
     );
     const balance = await contract.methods.balanceOf(wallet.address).call();
