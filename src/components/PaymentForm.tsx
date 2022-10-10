@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "next/link";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { useCelo } from "@celo/react-celo";
 import s from "../styles/App.module.css";
 import carbonPayProcessorAbi from "../abi/CarbonPayProcessor.json";
@@ -9,12 +8,17 @@ import c from "../constants/constants";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const PaymentForm = ({ address, connect }) => {
+interface IProps {
+  address: string;
+  connect: () => void;
+}
+
+const PaymentForm = ({ address, connect }: IProps) => {
   const { kit } = useCelo();
   const [gas, setGas] = useState(0);
   const [name, setName] = useState("");
-  const merchantIdInput = useRef();
-  const paymentAmountInput = useRef();
+  const merchantIdInput = useRef<HTMLInputElement>(null);
+  const paymentAmountInput = useRef<HTMLInputElement>(null);
   const paymentProcessorContract = new kit.connection.web3.eth.Contract(
     carbonPayProcessorAbi,
     c.PAY_PROCESSOR_ADDRESS
@@ -39,9 +43,14 @@ const PaymentForm = ({ address, connect }) => {
         setGas(gas);
       }
     })();
-  }, [address]);
+  }, [
+    address,
+    kit.connection.web3.eth,
+    kit.connection.web3.utils,
+    paymentProcessorContract.methods,
+  ]);
 
-  const getTransactionLink = (hash) => {
+  const getTransactionLink = (hash: string) => {
     return (
       <div>
         <Link
@@ -53,7 +62,7 @@ const PaymentForm = ({ address, connect }) => {
     );
   };
 
-  const pay = async (merchantAddress, amount) => {
+  const pay = async (merchantAddress?: string, amount?: string) => {
     try {
       await paymentProcessorContract.methods
         .pay(
@@ -62,7 +71,7 @@ const PaymentForm = ({ address, connect }) => {
           kit.connection.web3.utils.toWei(amount, "ether")
         )
         .send({ from: address })
-        .on("transactionHash", function (hash) {
+        .on("transactionHash", function (hash: string) {
           toast.info(() => getTransactionLink(hash));
         });
     } catch (err) {
@@ -75,11 +84,11 @@ const PaymentForm = ({ address, connect }) => {
     }
   };
 
-  const isValidAddress = (address) => {
+  const isValidAddress = (address: string) => {
     return kit.connection.web3.utils.isAddress(address);
   };
 
-  const getMerchantName = async (address) => {
+  const getMerchantName = async (address: string) => {
     const tokenId = await nftContract.methods
       .getTokenIdByAddress(address)
       .call();
@@ -88,7 +97,9 @@ const PaymentForm = ({ address, connect }) => {
     return name;
   };
 
-  const showName = async (address) => {
+  const showName = async (address?: string) => {
+    if (!address) return;
+
     if (!isValidAddress(address)) {
       return setName("");
     }
@@ -110,7 +121,7 @@ const PaymentForm = ({ address, connect }) => {
         <div className={s.inputWrap}>
           <input
             ref={merchantIdInput}
-            onBlur={() => showName(merchantIdInput.current.value)}
+            onBlur={() => showName(merchantIdInput?.current?.value)}
             placeholder="0x..."
             className={s.input}
             type="text"
@@ -136,7 +147,10 @@ const PaymentForm = ({ address, connect }) => {
       </div>
       <button
         onClick={() =>
-          pay(merchantIdInput.current.value, paymentAmountInput.current.value)
+          pay(
+            merchantIdInput?.current?.value,
+            paymentAmountInput?.current?.value
+          )
         }
         className={`${s.btn} ${s.btnLarge}`}
       >

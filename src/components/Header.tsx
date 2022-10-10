@@ -2,7 +2,13 @@ import s from "../styles/App.module.css";
 import Link from "next/link";
 import Image from "next/image";
 
-const Header = ({ address, connect, registered }) => {
+interface IProps {
+  address?: string;
+  connect: () => void;
+  registered: boolean;
+}
+
+const Header = ({ address, connect, registered }: IProps) => {
   return (
     <header className={s.header}>
       <div className={s.headerInner}>

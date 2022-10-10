@@ -1,14 +1,14 @@
-import Head from "next/head";
+import NextHead from "next/head";
 
-const H = () => (
-  <Head>
+const Head = () => (
+  <NextHead>
     <title>CarbonPay</title>
     <meta
       name="description"
       content="Fight climate change by doing whatever you do best"
     />
     <link rel="icon" href="/favicon.ico" />
-  </Head>
+  </NextHead>
 );
 
-export default H;
+export default Head;

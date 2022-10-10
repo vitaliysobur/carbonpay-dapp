@@ -5,17 +5,22 @@ import s from "../styles/App.module.css";
 import carbonPayNftAbi from "../abi/CarbonPayNFT.json";
 import c from "../constants/constants";
 
-const RegistrationForm = ({ address, connect }) => {
+interface IProps {
+  address: string;
+  connect: () => void;
+}
+
+const RegistrationForm = ({ address, connect }: IProps) => {
   const { kit } = useCelo();
   const [gas, setGas] = useState(0);
-  const merchantInput = useRef(null);
+  const merchantInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const contract = new kit.connection.web3.eth.Contract(
     carbonPayNftAbi,
     c.NFT_CONTRACT_ADDRESS
   );
 
-  const register = async (name) => {
+  const register = async (name?: string) => {
     try {
       await contract.methods.safeMint(address, name).send({ from: address });
       router.push("/merchant");
@@ -64,7 +69,7 @@ const RegistrationForm = ({ address, connect }) => {
         <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
       </div>
       <button
-        onClick={() => register(merchantInput.current.value)}
+        onClick={() => register(merchantInput?.current?.value)}
         className={`${s.btn} ${s.btnLarge}`}
       >
         Mint carbonNFT
