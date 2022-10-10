@@ -8,7 +8,7 @@ import "@celo/react-celo/lib/styles.css";
 import { useWallet } from "../hooks/useWallet";
 import RegistrationForm from "../components/RegistrationForm";
 import { useCelo } from "@celo/react-celo";
-import carbonPayNftAbi from "../abi/CarbonPayNFT.json";
+import carbonPayNftAbi from "../abi/CarbonPayNFT";
 import { AiFillEye, AiFillHeart } from "react-icons/ai";
 import { BiStats } from "react-icons/bi";
 import c from "../constants/constants";

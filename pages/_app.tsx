@@ -5,6 +5,7 @@ const CarbonPay = ({ Component, pageProps }) => {
   return (
     <CeloProvider
       dapp={{
+        icon: "https://carbonpay.io/favicon.ico",
         name: "CarbonPay",
         description: "Fight climate change by doing whatever you do best",
         url: "https://example.com",
