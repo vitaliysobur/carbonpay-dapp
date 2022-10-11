@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import atob from "atob";
 import s from "@/styles/App.module.css";
-import "@celo/react-celo/lib/styles.css";
+
 import RegistrationForm from "@/components/RegistrationForm";
 import CarbonPayNftAbi from "@/abi/CarbonPayNFT.json";
 import { AiFillEye, AiFillHeart } from "react-icons/ai";
@@ -14,7 +14,8 @@ import { AbiItem } from "web3-utils";
 
 export default function Merchant() {
   const [nav, setNav] = useState(0);
-  const [metadata, setMetadata] = useState(null);
+  // TODO: fix types of metadata
+  const [metadata, setMetadata] = useState<any>(null);
 
   const { isRegistered, address, kit } = useWallet();
 
@@ -61,7 +62,7 @@ export default function Merchant() {
             </li>
           )}
         </ul>
-        {!isRegistered && <RegistrationForm {...wallet} />}
+        {!isRegistered && <RegistrationForm />}
         {isRegistered && (
           <div className={s.profileWrap}>
             <div className={s.nftWrap}>

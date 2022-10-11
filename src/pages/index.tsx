@@ -1,6 +1,5 @@
 import { useState } from "react";
 import s from "@/styles/App.module.css";
-import "@celo/react-celo/lib/styles.css";
 import PaymentForm from "@/components/PaymentForm";
 import RegistrationForm from "@/components/RegistrationForm";
 import Layout from "@/components/Layout";

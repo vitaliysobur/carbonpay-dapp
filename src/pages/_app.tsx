@@ -1,6 +1,10 @@
 import { AppProps } from "next/app";
 import { CeloProvider, Alfajores } from "@celo/react-celo";
-import "../styles/globals.css";
+import "@/styles/globals.css";
+import "react-toastify/dist/ReactToastify.css";
+// TODO: Move to the connect page
+import "@celo/react-celo/lib/styles.css";
+import { ToastContainer } from "react-toastify";
 
 const CarbonPay = ({ Component, pageProps }: AppProps) => {
   return (
@@ -17,6 +21,7 @@ const CarbonPay = ({ Component, pageProps }: AppProps) => {
         providersOptions: { searchable: true },
       }}
     >
+      <ToastContainer position="top-center" />
       <Component {...pageProps} />
     </CeloProvider>
   );

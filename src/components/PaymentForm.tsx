@@ -1,18 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import s from "@/styles/App.module.css";
-import carbonPayProcessorAbi from "@/abi/CarbonPayProcessor.json";
-import carbonPayNftAbi from "@/abi/CarbonPayNFT.json";
-import {
-  NFT_CONTRACT_ADDRESS,
-  PAY_PROCESSOR_ADDRESS,
-  TOKEN_ADDRESS,
-  NETWORK_DOMAIN,
-} from "@/constants/constants";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { TOKEN_ADDRESS } from "@/constants/constants";
+import { toast } from "react-toastify";
+
 import useWallet from "@/hooks/useWallet";
-import { AbiItem } from "web3-utils";
+import {
+  getGas,
+  getMerchantName,
+  isValidAddress,
+  paymentProcessorContract,
+} from "@/services/contracts";
+import TransactionLink from "@/components/TransactionLink";
 
 const PaymentForm = () => {
   const { address, connect, kit } = useWallet();
@@ -20,56 +18,26 @@ const PaymentForm = () => {
   const [name, setName] = useState("");
   const merchantIdInput = useRef<HTMLInputElement>(null);
   const paymentAmountInput = useRef<HTMLInputElement>(null);
-  const paymentProcessorContract = new kit.connection.web3.eth.Contract(
-    carbonPayProcessorAbi as AbiItem[],
-    PAY_PROCESSOR_ADDRESS
-  );
-  const nftContract = new kit.connection.web3.eth.Contract(
-    carbonPayNftAbi as AbiItem[],
-    NFT_CONTRACT_ADDRESS
-  );
 
   useEffect(() => {
     let isMounted = true;
 
-    (async () => {
+    const updateGas = async () => {
       if (address) {
-        const gasPrice = await kit.connection.web3.eth.getGasPrice();
-        const gasEstimate = await paymentProcessorContract.methods
-          .pay(
-            address,
-            TOKEN_ADDRESS,
-            kit.connection.web3.utils.toWei("0", "ether")
-          )
-          .estimateGas();
-
-        const gas = (Number(gasPrice) * gasEstimate) / 10 ** 18;
+        const gas = await getGas(kit, address);
 
         if (isMounted) {
           setGas(gas);
         }
       }
-    })();
+    };
+
+    updateGas();
 
     return () => {
       isMounted = false;
     };
-  }, [
-    address,
-    kit.connection.web3.eth,
-    kit.connection.web3.utils,
-    paymentProcessorContract.methods,
-  ]);
-
-  const getTransactionLink = (hash: string) => {
-    return (
-      <div>
-        <Link href={`${NETWORK_DOMAIN}/tx/${hash}/token-transfers`}>
-          Payment receipt
-        </Link>
-      </div>
-    );
-  };
+  }, [address, kit]);
 
   const pay = async (merchantAddress?: string, amount?: string) => {
     try {
@@ -77,19 +45,19 @@ const PaymentForm = () => {
         return;
       }
 
-      await paymentProcessorContract.methods
-        .pay(
+      await paymentProcessorContract(kit)
+        .methods.pay(
           merchantAddress,
           TOKEN_ADDRESS,
           kit.connection.web3.utils.toWei(amount, "ether")
         )
         .send({ from: address })
         .on("transactionHash", function (hash: string) {
-          toast.info(() => getTransactionLink(hash));
+          toast.info(() => <TransactionLink hash={hash} />);
         });
     } catch (err) {
       console.log(err);
-      if (/4001/.test(err)) {
+      if (/4001/.test(err as string)) {
         console.log("Rejected");
       } else {
         !address && (await connect());
@@ -97,28 +65,15 @@ const PaymentForm = () => {
     }
   };
 
-  const isValidAddress = (address: string) => {
-    return kit.connection.web3.utils.isAddress(address);
-  };
-
-  const getMerchantName = async (address: string) => {
-    const tokenId = await nftContract.methods
-      .getTokenIdByAddress(address)
-      .call();
-    const name = (await nftContract.methods.attributes(tokenId).call()).name;
-
-    return name;
-  };
-
   const showName = async (address?: string) => {
     if (!address) return;
 
-    if (!isValidAddress(address)) {
+    if (!isValidAddress(kit, address)) {
       return setName("");
     }
 
     try {
-      const name = await getMerchantName(address);
+      const name = await getMerchantName(kit, address);
       setName(name);
     } catch (err) {
       console.log(err);
@@ -128,7 +83,6 @@ const PaymentForm = () => {
 
   return (
     <div className={s.formWrap}>
-      <ToastContainer position="top-center" />
       <div className={s.formControl}>
         <label className={s.label}>Merchant ID</label>
         <div className={s.inputWrap}>

@@ -2,7 +2,6 @@ import { useState, ReactNode } from "react";
 import Head from "@/components/Head";
 import Header from "@/components/Header";
 import s from "@/styles/App.module.css";
-import "@celo/react-celo/lib/styles.css";
 
 export enum NavState {
   Pay = 0,

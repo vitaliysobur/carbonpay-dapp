@@ -1,11 +1,9 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useCelo } from "@celo/react-celo";
 import s from "@/styles/App.module.css";
-import carbonPayNftAbi from "@/abi/CarbonPayNFT.json";
-import { NFT_CONTRACT_ADDRESS } from "@/constants/constants";
-import { AbiItem } from "web3-utils";
 import useWallet from "@/hooks/useWallet";
+import { getGas, nftContract } from "@/services/contracts";
 
 const RegistrationForm = () => {
   const { address, connect } = useWallet();
@@ -14,36 +12,33 @@ const RegistrationForm = () => {
   const [gas, setGas] = useState(0);
   const merchantInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const contract = new kit.connection.web3.eth.Contract(
-    carbonPayNftAbi as AbiItem[],
-    NFT_CONTRACT_ADDRESS
-  );
 
-  const register = async (name?: string) => {
+  const handleRegister = useCallback(async () => {
+    const name = merchantInput?.current?.value;
+    if (!name) {
+      return;
+    }
     try {
-      await contract.methods.safeMint(address, name).send({ from: address });
+      await nftContract(kit)
+        .methods.safeMint(address, name)
+        .send({ from: address });
       router.push("/merchant");
     } catch (err) {
       console.log(err);
-      if (/4001/.test(err)) {
+      if (/4001/.test(err as string)) {
         console.log("Rejected");
       } else {
         !address && (await connect());
       }
     }
-  };
+  }, [address, connect, kit, router]);
 
   useEffect(() => {
     let isMounted = true;
 
     (async () => {
       if (address) {
-        const gasPrice = await kit.connection.web3.eth.getGasPrice();
-        const gasEstimate = await contract.methods
-          .safeMint(address, name)
-          .estimateGas();
-
-        const gas = (Number(gasPrice) * gasEstimate) / 10 ** 18;
+        const gas = await getGas(kit, address);
 
         if (isMounted) {
           setGas(gas);
@@ -54,7 +49,7 @@ const RegistrationForm = () => {
     return () => {
       isMounted = false;
     };
-  }, [address, contract.methods, kit.connection.web3.eth]);
+  }, [address, kit]);
 
   return (
     <div className={s.formWrap}>
@@ -77,10 +72,7 @@ const RegistrationForm = () => {
         <label className={s.label}>Gas Fee</label>
         <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
       </div>
-      <button
-        onClick={() => register(merchantInput?.current?.value)}
-        className={`${s.btn} ${s.btnLarge}`}
-      >
+      <button onClick={handleRegister} className={`${s.btn} ${s.btnLarge}`}>
         Mint carbonNFT
       </button>
     </div>
