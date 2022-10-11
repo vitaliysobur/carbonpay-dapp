@@ -77,7 +77,7 @@ export default function Merchant() {
             <div className={s.profileWrap}>
               <div className={s.nftWrap}>
                 <div className={s.nft}>
-                  <Image src="/nft.png" width="384" height="522" alt="NFT" />
+                  <Image src="img/nft.png" width="384" height="522" alt="NFT" />
                 </div>
               </div>
               <div className={s.profileDetails}>

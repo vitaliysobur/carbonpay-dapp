@@ -16,7 +16,7 @@ const Header = ({ address, connect, registered }: IProps) => {
           <a className={s.logo}>
             <Image
               alt="CarbonPay logo"
-              src="/carbonpay-logo.png"
+              src="/img/carbonpay-logo.png"
               width="256px"
               height="64px"
               layout="fixed"
