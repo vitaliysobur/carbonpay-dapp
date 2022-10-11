@@ -4,7 +4,12 @@ import { useCelo } from "@celo/react-celo";
 import s from "../styles/App.module.css";
 import carbonPayProcessorAbi from "../abi/CarbonPayProcessor.json";
 import carbonPayNftAbi from "../abi/CarbonPayNFT.json";
-import c from "../constants/constants";
+import {
+  NFT_CONTRACT_ADDRESS,
+  PAY_PROCESSOR_ADDRESS,
+  TOKEN_ADDRESS,
+  NETWORK_DOMAIN,
+} from "../constants/constants";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,11 +26,11 @@ const PaymentForm = ({ address, connect }: IProps) => {
   const paymentAmountInput = useRef<HTMLInputElement>(null);
   const paymentProcessorContract = new kit.connection.web3.eth.Contract(
     carbonPayProcessorAbi,
-    c.PAY_PROCESSOR_ADDRESS
+    PAY_PROCESSOR_ADDRESS
   );
   const nftContract = new kit.connection.web3.eth.Contract(
     carbonPayNftAbi,
-    c.NFT_CONTRACT_ADDRESS
+    NFT_CONTRACT_ADDRESS
   );
 
   useEffect(() => {
@@ -35,10 +40,11 @@ const PaymentForm = ({ address, connect }: IProps) => {
         const gasEstimate = await paymentProcessorContract.methods
           .pay(
             address,
-            c.TOKEN_ADDRESS,
+            TOKEN_ADDRESS,
             kit.connection.web3.utils.toWei("0", "ether")
           )
           .estimateGas();
+
         const gas = (gasPrice * gasEstimate) / 10 ** 18;
         setGas(gas);
       }
@@ -53,9 +59,7 @@ const PaymentForm = ({ address, connect }: IProps) => {
   const getTransactionLink = (hash: string) => {
     return (
       <div>
-        <Link
-          href={`https://alfajores-blockscout.celo-testnet.org/tx/${hash}/token-transfers`}
-        >
+        <Link href={`${NETWORK_DOMAIN}/tx/${hash}/token-transfers`}>
           Payment receipt
         </Link>
       </div>
@@ -67,7 +71,7 @@ const PaymentForm = ({ address, connect }: IProps) => {
       await paymentProcessorContract.methods
         .pay(
           merchantAddress,
-          c.TOKEN_ADDRESS,
+          TOKEN_ADDRESS,
           kit.connection.web3.utils.toWei(amount, "ether")
         )
         .send({ from: address })
