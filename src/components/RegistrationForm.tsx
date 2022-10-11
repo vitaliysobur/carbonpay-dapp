@@ -29,7 +29,7 @@ const RegistrationForm = () => {
       await nftContract(kit)
         .methods.safeMint(address, name)
         .send({ from: address });
-      router.push("/merchant");
+      router.push("/profile");
     } catch (err) {
       console.log(err);
       if (/4001/.test(err as string)) {

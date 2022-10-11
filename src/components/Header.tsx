@@ -29,7 +29,7 @@ const Header = () => {
           </div>
         )}
         {isRegistered && (
-          <Link href="/merchant">
+          <Link href="/profile">
             <a className={s.profileLink}>Profile</a>
           </Link>
         )}
