@@ -1,22 +1,21 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useCelo } from "@celo/react-celo";
-import s from "../styles/App.module.css";
-import carbonPayNftAbi from "../abi/CarbonPayNFT.json";
-import { NFT_CONTRACT_ADDRESS } from "../constants/constants";
+import s from "@/styles/App.module.css";
+import carbonPayNftAbi from "@/abi/CarbonPayNFT.json";
+import { NFT_CONTRACT_ADDRESS } from "@/constants/constants";
+import { AbiItem } from "web3-utils";
+import useWallet from "@/hooks/useWallet";
 
-interface IProps {
-  address: string;
-  connect: () => void;
-}
+const RegistrationForm = () => {
+  const { address, connect } = useWallet();
 
-const RegistrationForm = ({ address, connect }: IProps) => {
   const { kit } = useCelo();
   const [gas, setGas] = useState(0);
   const merchantInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const contract = new kit.connection.web3.eth.Contract(
-    carbonPayNftAbi,
+    carbonPayNftAbi as AbiItem[],
     NFT_CONTRACT_ADDRESS
   );
 
@@ -35,17 +34,27 @@ const RegistrationForm = ({ address, connect }: IProps) => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+
     (async () => {
       if (address) {
         const gasPrice = await kit.connection.web3.eth.getGasPrice();
         const gasEstimate = await contract.methods
           .safeMint(address, name)
           .estimateGas();
-        const gas = (gasPrice * gasEstimate) / 10 ** 18;
-        setGas(gas);
+
+        const gas = (Number(gasPrice) * gasEstimate) / 10 ** 18;
+
+        if (isMounted) {
+          setGas(gas);
+        }
       }
     })();
-  }, [address]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [address, contract.methods, kit.connection.web3.eth]);
 
   return (
     <div className={s.formWrap}>

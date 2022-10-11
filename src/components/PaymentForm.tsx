@@ -1,39 +1,37 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useCelo } from "@celo/react-celo";
-import s from "../styles/App.module.css";
-import carbonPayProcessorAbi from "../abi/CarbonPayProcessor.json";
-import carbonPayNftAbi from "../abi/CarbonPayNFT.json";
+import s from "@/styles/App.module.css";
+import carbonPayProcessorAbi from "@/abi/CarbonPayProcessor.json";
+import carbonPayNftAbi from "@/abi/CarbonPayNFT.json";
 import {
   NFT_CONTRACT_ADDRESS,
   PAY_PROCESSOR_ADDRESS,
   TOKEN_ADDRESS,
   NETWORK_DOMAIN,
-} from "../constants/constants";
+} from "@/constants/constants";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useWallet from "@/hooks/useWallet";
+import { AbiItem } from "web3-utils";
 
-interface IProps {
-  address: string;
-  connect: () => void;
-}
-
-const PaymentForm = ({ address, connect }: IProps) => {
-  const { kit } = useCelo();
+const PaymentForm = () => {
+  const { address, connect, kit } = useWallet();
   const [gas, setGas] = useState(0);
   const [name, setName] = useState("");
   const merchantIdInput = useRef<HTMLInputElement>(null);
   const paymentAmountInput = useRef<HTMLInputElement>(null);
   const paymentProcessorContract = new kit.connection.web3.eth.Contract(
-    carbonPayProcessorAbi,
+    carbonPayProcessorAbi as AbiItem[],
     PAY_PROCESSOR_ADDRESS
   );
   const nftContract = new kit.connection.web3.eth.Contract(
-    carbonPayNftAbi,
+    carbonPayNftAbi as AbiItem[],
     NFT_CONTRACT_ADDRESS
   );
 
   useEffect(() => {
+    let isMounted = true;
+
     (async () => {
       if (address) {
         const gasPrice = await kit.connection.web3.eth.getGasPrice();
@@ -45,10 +43,17 @@ const PaymentForm = ({ address, connect }: IProps) => {
           )
           .estimateGas();
 
-        const gas = (gasPrice * gasEstimate) / 10 ** 18;
-        setGas(gas);
+        const gas = (Number(gasPrice) * gasEstimate) / 10 ** 18;
+
+        if (isMounted) {
+          setGas(gas);
+        }
       }
     })();
+
+    return () => {
+      isMounted = false;
+    };
   }, [
     address,
     kit.connection.web3.eth,
@@ -68,6 +73,10 @@ const PaymentForm = ({ address, connect }: IProps) => {
 
   const pay = async (merchantAddress?: string, amount?: string) => {
     try {
+      if (!amount) {
+        return;
+      }
+
       await paymentProcessorContract.methods
         .pay(
           merchantAddress,

@@ -1,62 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import atob from "atob";
 import s from "@/styles/App.module.css";
 import "@celo/react-celo/lib/styles.css";
-import { useWallet } from "@/hooks/useWallet";
 import RegistrationForm from "@/components/RegistrationForm";
-import { useCelo } from "@celo/react-celo";
-import carbonPayNftAbi from "@/abi/CarbonPayNFT.json";
+import CarbonPayNftAbi from "@/abi/CarbonPayNFT.json";
 import { AiFillEye, AiFillHeart } from "react-icons/ai";
 import { BiStats } from "react-icons/bi";
 import { NFT_CONTRACT_ADDRESS } from "@/constants/constants";
 import Layout from "@/components/Layout";
+import useWallet from "@/hooks/useWallet";
+import { AbiItem } from "web3-utils";
 
 export default function Merchant() {
   const [nav, setNav] = useState(0);
-  const [registered, setRegistered] = useState(false);
   const [metadata, setMetadata] = useState(null);
-  const { kit } = useCelo();
-  const wallet = useWallet();
 
-  const isRegistered = async () => {
-    if (!wallet.address) return false;
+  const { isRegistered, address, kit } = useWallet();
+
+  const getNftMetadata = useCallback(async () => {
+    if (!address) return null;
     const contract = new kit.connection.web3.eth.Contract(
-      carbonPayNftAbi,
+      CarbonPayNftAbi as AbiItem[],
       NFT_CONTRACT_ADDRESS
     );
-    const balance = await contract.methods.balanceOf(wallet.address).call();
-    return balance > 0;
-  };
-
-  const getNftMetadata = async () => {
-    if (!wallet.address) return null;
-    const contract = new kit.connection.web3.eth.Contract(
-      carbonPayNftAbi,
-      NFT_CONTRACT_ADDRESS
-    );
-    const tokenId = await contract.methods
-      .getTokenIdByAddress(wallet.address)
-      .call();
+    const tokenId = await contract.methods.getTokenIdByAddress(address).call();
     const metadata = await contract.methods.tokenURI(tokenId).call();
     const json = atob(metadata.substring(29));
     return JSON.parse(json.replace("},", "}"));
-  };
+  }, [address, kit.connection.web3.eth.Contract]);
 
   useEffect(() => {
+    let isMounted = true;
     (async () => {
-      (await isRegistered()) ? setRegistered(true) : setRegistered(false);
-
       const metadata = await getNftMetadata();
-      metadata ? setMetadata(metadata) : setMetadata(null);
+
+      if (isMounted) {
+        setMetadata(metadata ?? null);
+      }
     })();
-  }, [wallet.address]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [getNftMetadata]);
 
   return (
     <Layout>
       <div className={s.content}>
         <ul className={s.nav}>
-          {!registered && (
+          {!isRegistered && (
             <li
               className={`${s.navItem} ${s.registerItem}  ${
                 nav && s.navItemSelected
@@ -68,8 +61,8 @@ export default function Merchant() {
             </li>
           )}
         </ul>
-        {!registered && <RegistrationForm {...wallet} />}
-        {registered && (
+        {!isRegistered && <RegistrationForm {...wallet} />}
+        {isRegistered && (
           <div className={s.profileWrap}>
             <div className={s.nftWrap}>
               <div className={s.nft}>

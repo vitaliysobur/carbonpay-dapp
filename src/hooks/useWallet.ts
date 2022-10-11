@@ -1,50 +1,62 @@
-import { Alfajores, useCelo, Connector } from "@celo/react-celo";
+import { useCelo } from "@celo/react-celo";
+import { useCallback, useEffect, useState } from "react";
+import CarbonPayNFTAbi from "@/abi/CarbonPayNFT.json";
+import { NFT_CONTRACT_ADDRESS } from "@/constants/constants";
+import { AbiItem } from "web3-utils";
 
-type Callback = () => Promise<Connector>;
+const useWallet = () => {
+  const [isRegistered, setRegistered] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const { kit, address, connect, destroy } = useCelo();
 
-export const useWallet = () => {
-  const {
-    address,
-    connect: connectFromHook,
-    destroy,
-    network: walletNetwork,
-  } = useCelo();
+  const getRegisteredState = useCallback(async () => {
+    if (!address) return false;
 
-  const network = Alfajores;
-  const wrongNetwork = network?.chainId !== walletNetwork?.chainId;
-
-  const connect = async (callback: Callback) => {
     try {
-      await connectFromHook();
+      const contract = new kit.connection.web3.eth.Contract(
+        CarbonPayNFTAbi as AbiItem[],
+        NFT_CONTRACT_ADDRESS
+      );
+      const balance = await contract.methods.balanceOf(address).call();
+      return balance > 0;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }, [kit.connection.web3.eth.Contract, address]);
 
-      if (!!callback) {
-        await callback();
+  const disconnect = useCallback(async () => {
+    await destroy();
+  }, [destroy]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkRegistration = async () => {
+      setLoading(true);
+      const isRegistered = await getRegisteredState();
+
+      if (isMounted) {
+        setRegistered(isRegistered);
+        setLoading(false);
       }
+    };
 
-      return true;
-    } catch (error) {
-      console.log(error);
+    checkRegistration();
 
-      return false;
-    }
-  };
-
-  const disconnect = async () => {
-    try {
-      await destroy();
-
-      return true;
-    } catch (error) {
-      console.log(error);
-
-      return false;
-    }
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, [getRegisteredState]);
 
   return {
     address,
+    kit,
     connect,
     disconnect,
-    wrongNetwork,
+    isRegistered,
+    isLoading,
   };
 };
+
+export default useWallet;

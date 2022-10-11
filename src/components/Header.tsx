@@ -1,14 +1,11 @@
 import s from "../styles/App.module.css";
 import Link from "next/link";
 import Image from "next/image";
+import useWallet from "@/hooks/useWallet";
 
-interface IProps {
-  address?: string;
-  connect: () => void;
-  registered: boolean;
-}
+const Header = () => {
+  const { isRegistered, address, connect } = useWallet();
 
-const Header = ({ address, connect, registered }: IProps) => {
   return (
     <header className={s.header}>
       <div className={s.headerInner}>
@@ -30,7 +27,7 @@ const Header = ({ address, connect, registered }: IProps) => {
             </button>
           </div>
         )}
-        {registered && (
+        {isRegistered && (
           <Link href="/merchant">
             <a className={s.profileLink}>Profile</a>
           </Link>

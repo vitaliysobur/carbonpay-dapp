@@ -1,13 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import s from "@/styles/App.module.css";
 import "@celo/react-celo/lib/styles.css";
-import { useWallet } from "@/hooks/useWallet";
 import PaymentForm from "@/components/PaymentForm";
 import RegistrationForm from "@/components/RegistrationForm";
-import { useCelo } from "@celo/react-celo";
-import carbonPayNftAbi from "@/abi/CarbonPayNFT.json";
-import { NFT_CONTRACT_ADDRESS } from "@/constants/constants";
 import Layout from "@/components/Layout";
+import useWallet from "@/hooks/useWallet";
 
 export enum NavState {
   Pay = 0,
@@ -16,26 +13,7 @@ export enum NavState {
 
 export default function IndexPage() {
   const [nav, setNav] = useState(NavState.Pay);
-  const [registered, setRegistered] = useState(false);
-  const { kit } = useCelo();
-  const wallet = useWallet();
-
-  const isRegistered = useCallback(async () => {
-    if (!wallet.address) return false;
-
-    const contract = new kit.connection.web3.eth.Contract(
-      carbonPayNftAbi,
-      NFT_CONTRACT_ADDRESS
-    );
-    const balance = await contract.methods.balanceOf(wallet.address).call();
-    return balance > 0;
-  }, [kit.connection.web3.eth.Contract, wallet.address]);
-
-  useEffect(() => {
-    (async () => {
-      setRegistered(await isRegistered());
-    })();
-  }, [isRegistered, wallet.address]);
+  const { isRegistered } = useWallet();
 
   return (
     <Layout>
@@ -46,7 +24,7 @@ export default function IndexPage() {
               Pay
             </a>
           </li>
-          {!registered && (
+          {!isRegistered && (
             <li
               className={`${s.navItem} ${s.registerItem}  ${
                 nav && s.navItemSelected
@@ -58,7 +36,7 @@ export default function IndexPage() {
             </li>
           )}
         </ul>
-        {!nav ? <PaymentForm {...wallet} /> : <RegistrationForm {...wallet} />}
+        {!nav ? <PaymentForm /> : <RegistrationForm />}
       </div>
     </Layout>
   );
