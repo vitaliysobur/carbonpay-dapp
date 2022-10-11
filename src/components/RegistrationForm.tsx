@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useCelo } from "@celo/react-celo";
 import s from "../styles/App.module.css";
 import carbonPayNftAbi from "../abi/CarbonPayNFT.json";
-import c from "../constants/constants";
+import { NFT_CONTRACT_ADDRESS } from "../constants/constants";
 
 interface IProps {
   address: string;
@@ -17,7 +17,7 @@ const RegistrationForm = ({ address, connect }: IProps) => {
   const router = useRouter();
   const contract = new kit.connection.web3.eth.Contract(
     carbonPayNftAbi,
-    c.NFT_CONTRACT_ADDRESS
+    NFT_CONTRACT_ADDRESS
   );
 
   const register = async (name?: string) => {
