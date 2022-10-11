@@ -1,5 +1,4 @@
 import React from "react";
-import s from "@/styles/App.module.css";
 import RegistrationForm from "@/components/RegistrationForm";
 import Layout from "@/components/Layout";
 import useWallet from "@/hooks/useWallet";
@@ -10,10 +9,8 @@ export default function Register() {
 
   return (
     <Layout>
-      <div className={s.content}>
-        <Tabs />
-        {!isRegistered && <RegistrationForm />}
-      </div>
+      <Tabs />
+      {!isRegistered && <RegistrationForm />}
     </Layout>
   );
 }

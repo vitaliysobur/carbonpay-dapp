@@ -39,46 +39,44 @@ export default function Profile() {
 
   return (
     <Layout>
-      <div className={s.content}>
-        {isRegistered && (
-          <div className={s.profileWrap}>
-            <div className={s.nftWrap}>
-              <div className={s.nft}>
-                <Image src="/img/nft.png" width="384" height="522" alt="NFT" />
-              </div>
-            </div>
-            <div className={s.profileDetails}>
-              <h2 className={s.profileTitle}>{metadata?.name}</h2>
-              <ul className={s.profileStats}>
-                <li>
-                  Owned by <b>0xadf234</b>
-                </li>
-                <li>
-                  <AiFillEye fontSize="20px" /> <span>13,177 views</span>
-                </li>
-                <li>
-                  <AiFillHeart fontSize="20px" /> <span>6003 favorite</span>
-                </li>
-              </ul>
-              <h3 className={s.offset}>
-                <span className={s.offsetTitle}>Total CO2 offset:</span>{" "}
-                {metadata?.attributes[0].value} tons
-              </h3>
-              <div className={s.transactions}>
-                <header>
-                  <span>
-                    <BiStats fontSize="20px" />
-                  </span>
-                  <span>Offset History</span>
-                </header>
-                <section>
-                  <div>Empty offset history</div>
-                </section>
-              </div>
+      {isRegistered && (
+        <div className={s.profileWrap}>
+          <div className={s.nftWrap}>
+            <div className={s.nft}>
+              <Image src="/img/nft.png" width="384" height="522" alt="NFT" />
             </div>
           </div>
-        )}
-      </div>
+          <div className={s.profileDetails}>
+            <h2 className={s.profileTitle}>{metadata?.name}</h2>
+            <ul className={s.profileStats}>
+              <li>
+                Owned by <b>0xadf234</b>
+              </li>
+              <li>
+                <AiFillEye fontSize="20px" /> <span>13,177 views</span>
+              </li>
+              <li>
+                <AiFillHeart fontSize="20px" /> <span>6003 favorite</span>
+              </li>
+            </ul>
+            <h3 className={s.offset}>
+              <span className={s.offsetTitle}>Total CO2 offset:</span>{" "}
+              {metadata?.attributes[0].value} tons
+            </h3>
+            <div className={s.transactions}>
+              <header>
+                <span>
+                  <BiStats fontSize="20px" />
+                </span>
+                <span>Offset History</span>
+              </header>
+              <section>
+                <div>Empty offset history</div>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
