@@ -1,10 +1,11 @@
-import s from "../styles/App.module.css";
+import s from "@/styles/App.module.css";
 import Link from "next/link";
 import Image from "next/image";
-import useWallet from "@/hooks/useWallet";
+import { useContext } from "react";
+import { WalletContext } from "@/context/WalletContext";
 
 const Header = () => {
-  const { isRegistered, address, connect } = useWallet();
+  const { isRegistered, address, connect } = useContext(WalletContext);
 
   return (
     <header className={s.header}>

@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import Image from "next/image";
 import atob from "atob";
 import s from "@/styles/App.module.css";
 import { AiFillEye, AiFillHeart } from "react-icons/ai";
 import { BiStats } from "react-icons/bi";
 import Layout from "@/components/Layout";
-import useWallet from "@/hooks/useWallet";
 import { nftContract } from "@/services/contracts";
+import { WalletContext } from "@/context/WalletContext";
 
 export default function Profile() {
   // TODO: fix types of metadata
   const [metadata, setMetadata] = useState<any>(null);
-  const { isRegistered, address, kit } = useWallet();
+  const { isRegistered, address, kit } = useContext(WalletContext);
 
   const getNftMetadata = useCallback(async () => {
     if (!address) return null;

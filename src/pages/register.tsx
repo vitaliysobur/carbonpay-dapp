@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import RegistrationForm from "@/components/RegistrationForm";
 import Layout from "@/components/Layout";
-import useWallet from "@/hooks/useWallet";
 import Tabs from "@/components/Tabs";
+import { WalletContext } from "@/context/WalletContext";
 
 export default function Register() {
-  const { isRegistered } = useWallet();
+  const { isRegistered } = useContext(WalletContext);
 
   return (
     <Layout>

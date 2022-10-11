@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import s from "@/styles/App.module.css";
 import { TOKEN_ADDRESS } from "@/constants/constants";
 import { toast } from "react-toastify";
-
-import useWallet from "@/hooks/useWallet";
 import {
   getGas,
   getMerchantName,
@@ -11,9 +9,10 @@ import {
   paymentProcessorContract,
 } from "@/services/contracts";
 import TransactionLink from "@/components/TransactionLink";
+import { WalletContext } from "@/context/WalletContext";
 
 const PaymentForm = () => {
-  const { address, connect, kit } = useWallet();
+  const { address, connect, kit } = useContext(WalletContext);
   const [gas, setGas] = useState(0);
   const [name, setName] = useState("");
   const merchantIdInput = useRef<HTMLInputElement>(null);

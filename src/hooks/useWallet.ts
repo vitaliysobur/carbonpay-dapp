@@ -1,29 +1,28 @@
-import { useCelo } from "@celo/react-celo";
+import { Maybe, useCelo } from "@celo/react-celo";
 import { useCallback, useEffect, useState } from "react";
-import CarbonPayNFTAbi from "@/abi/CarbonPayNFT.json";
-import { NFT_CONTRACT_ADDRESS } from "@/constants/constants";
-import { AbiItem } from "web3-utils";
+import { nftContract } from "@/services/contracts";
+import { MiniContractKit } from "@celo/contractkit/lib/mini-kit";
 
 const useWallet = () => {
   const [isRegistered, setRegistered] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const { kit, address, connect, destroy } = useCelo();
 
-  const getRegisteredState = useCallback(async () => {
-    if (!address) return false;
+  const getRegisteredState = useCallback(
+    async (kit: MiniContractKit, address: Maybe<string>) => {
+      if (!address) return false;
 
-    try {
-      const contract = new kit.connection.web3.eth.Contract(
-        CarbonPayNFTAbi as AbiItem[],
-        NFT_CONTRACT_ADDRESS
-      );
-      const balance = await contract.methods.balanceOf(address).call();
-      return balance > 0;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  }, [kit.connection.web3.eth.Contract, address]);
+      try {
+        const contract = nftContract(kit);
+        const balance = await contract.methods.balanceOf(address).call();
+        return balance > 0;
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    },
+    []
+  );
 
   const disconnect = useCallback(async () => {
     await destroy();
@@ -34,7 +33,7 @@ const useWallet = () => {
 
     const checkRegistration = async () => {
       setLoading(true);
-      const isRegistered = await getRegisteredState();
+      const isRegistered = await getRegisteredState(kit, address);
 
       if (isMounted) {
         setRegistered(isRegistered);
@@ -47,7 +46,7 @@ const useWallet = () => {
     return () => {
       isMounted = false;
     };
-  }, [getRegisteredState]);
+  }, [kit, address, getRegisteredState]);
 
   return {
     address,

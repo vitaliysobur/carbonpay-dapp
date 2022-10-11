@@ -1,12 +1,18 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+} from "react";
 import { useRouter } from "next/router";
 import { useCelo } from "@celo/react-celo";
 import s from "@/styles/App.module.css";
-import useWallet from "@/hooks/useWallet";
 import { getGas, nftContract } from "@/services/contracts";
+import { WalletContext } from "@/context/WalletContext";
 
 const RegistrationForm = () => {
-  const { address, connect } = useWallet();
+  const { address, connect } = useContext(WalletContext);
 
   const { kit } = useCelo();
   const [gas, setGas] = useState(0);
@@ -18,6 +24,7 @@ const RegistrationForm = () => {
     if (!name) {
       return;
     }
+
     try {
       await nftContract(kit)
         .methods.safeMint(address, name)

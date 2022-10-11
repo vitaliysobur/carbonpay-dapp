@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 // TODO: Move to the connect page
 import "@celo/react-celo/lib/styles.css";
 import { ToastContainer } from "react-toastify";
+import { WalletProvider } from "@/context/WalletContext";
 
 const CarbonPay = ({ Component, pageProps }: AppProps) => {
   return (
@@ -21,8 +22,10 @@ const CarbonPay = ({ Component, pageProps }: AppProps) => {
         providersOptions: { searchable: true },
       }}
     >
-      <ToastContainer position="top-center" />
-      <Component {...pageProps} />
+      <WalletProvider>
+        <ToastContainer position="top-center" />
+        <Component {...pageProps} />
+      </WalletProvider>
     </CeloProvider>
   );
 };

@@ -1,7 +1,8 @@
 import s from "@/styles/App.module.css";
-import useWallet from "@/hooks/useWallet";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useContext } from "react";
+import { WalletContext } from "@/context/WalletContext";
 
 const links = [
   {
@@ -17,7 +18,7 @@ const links = [
 
 export default function Tabs() {
   const router = useRouter();
-  const { isRegistered } = useWallet();
+  const { isRegistered } = useContext(WalletContext);
 
   return (
     <ul className={s.nav}>
