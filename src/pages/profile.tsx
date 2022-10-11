@@ -2,34 +2,25 @@ import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import atob from "atob";
 import s from "@/styles/App.module.css";
-
-import RegistrationForm from "@/components/RegistrationForm";
-import CarbonPayNftAbi from "@/abi/CarbonPayNFT.json";
 import { AiFillEye, AiFillHeart } from "react-icons/ai";
 import { BiStats } from "react-icons/bi";
-import { NFT_CONTRACT_ADDRESS } from "@/constants/constants";
 import Layout from "@/components/Layout";
 import useWallet from "@/hooks/useWallet";
-import { AbiItem } from "web3-utils";
+import { nftContract } from "@/services/contracts";
 
-export default function Merchant() {
-  const [nav, setNav] = useState(0);
+export default function Profile() {
   // TODO: fix types of metadata
   const [metadata, setMetadata] = useState<any>(null);
-
   const { isRegistered, address, kit } = useWallet();
 
   const getNftMetadata = useCallback(async () => {
     if (!address) return null;
-    const contract = new kit.connection.web3.eth.Contract(
-      CarbonPayNftAbi as AbiItem[],
-      NFT_CONTRACT_ADDRESS
-    );
+    const contract = nftContract(kit);
     const tokenId = await contract.methods.getTokenIdByAddress(address).call();
     const metadata = await contract.methods.tokenURI(tokenId).call();
     const json = atob(metadata.substring(29));
     return JSON.parse(json.replace("},", "}"));
-  }, [address, kit.connection.web3.eth.Contract]);
+  }, [address, kit]);
 
   useEffect(() => {
     let isMounted = true;
@@ -49,20 +40,6 @@ export default function Merchant() {
   return (
     <Layout>
       <div className={s.content}>
-        <ul className={s.nav}>
-          {!isRegistered && (
-            <li
-              className={`${s.navItem} ${s.registerItem}  ${
-                nav && s.navItemSelected
-              }`}
-            >
-              <a href="#register" onClick={() => setNav(1)}>
-                Register Merchant
-              </a>
-            </li>
-          )}
-        </ul>
-        {!isRegistered && <RegistrationForm />}
         {isRegistered && (
           <div className={s.profileWrap}>
             <div className={s.nftWrap}>
