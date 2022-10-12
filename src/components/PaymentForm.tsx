@@ -74,7 +74,11 @@ const PaymentForm = () => {
             />
 
             <div className="subLabel">{name}</div>
-            <ErrorMessage name="merchant" component="span" />
+            <ErrorMessage
+              name="merchant"
+              component="span"
+              className="text-red-500"
+            />
           </div>
         </div>
         <div className="formControl">
@@ -90,7 +94,11 @@ const PaymentForm = () => {
               }
             />
             <p className="subLabel">$4.79 USD</p>
-            <ErrorMessage name="amount" component="div" />
+            <ErrorMessage
+              name="amount"
+              component="div"
+              className="text-red-500"
+            />
           </div>
         </div>
         <div className="formControl">
