@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { useCelo } from "@celo/react-celo";
 import { getGas, nftContract } from "@/services/contracts";
 import { WalletContext } from "@/context/WalletContext";
+import Form from "@/components/Form";
 
 const RegistrationForm = () => {
   const { address, connect } = useContext(WalletContext);
@@ -58,7 +59,7 @@ const RegistrationForm = () => {
   }, [address, kit]);
 
   return (
-    <form className="formWrap">
+    <Form>
       <div className="formControl">
         <label className="label">Merchant Name</label>
         <div className="inputWrap">
@@ -78,10 +79,10 @@ const RegistrationForm = () => {
         <label className="label">Gas Fee</label>
         <div className="subLabel subLabelLarge">+ {gas} CELO</div>
       </div>
-      <button onClick={handleRegister} className="btn-primary w-full text-lg">
+      <button onClick={handleRegister} className="w-full text-lg btn-primary">
         Mint carbonNFT
       </button>
-    </form>
+    </Form>
   );
 };
 

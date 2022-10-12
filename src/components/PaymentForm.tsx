@@ -7,8 +7,9 @@ import {
   isValidAddress,
   paymentProcessorContract,
 } from "@/services/contracts";
-import TransactionLink from "@/components/TransactionLink";
 import { WalletContext } from "@/context/WalletContext";
+import TransactionLink from "@/components/TransactionLink";
+import Form from "@/components/Form";
 
 const PaymentForm = () => {
   const { address, connect, kit } = useContext(WalletContext);
@@ -80,7 +81,7 @@ const PaymentForm = () => {
   };
 
   return (
-    <form className="relative max-w-[420px] w-full mt-12 p-5 pt-12 bg-white bg-opacity-30 rounded-xl text-white">
+    <Form>
       <div className="formControl">
         <label className="label">Merchant ID</label>
         <div className="inputWrap">
@@ -117,11 +118,11 @@ const PaymentForm = () => {
             paymentAmountInput?.current?.value
           )
         }
-        className="btn-primary w-full text-lg"
+        className="w-full text-lg btn-primary"
       >
         Authorize Transaction
       </button>
-    </form>
+    </Form>
   );
 };
 
