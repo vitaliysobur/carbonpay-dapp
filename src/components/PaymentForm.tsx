@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { TOKEN_ADDRESS } from "@/constants/constants";
 import { toast } from "react-toastify";
 import {
-  getGas,
   getMerchantName,
   isValidAddress,
   paymentProcessorContract,
@@ -11,31 +10,12 @@ import { WalletContext } from "@/context/WalletContext";
 import TransactionLink from "@/components/TransactionLink";
 import Form from "@/components/Form";
 import { Formik, Field, ErrorMessage } from "formik";
+import useGas from "@/hooks/useGas";
 
 const PaymentForm = () => {
+  const { gas } = useGas();
   const { address, connect, kit } = useContext(WalletContext);
-  const [gas, setGas] = useState(0);
   const [name, setName] = useState("");
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const updateGas = async () => {
-      if (address) {
-        const gas = await getGas(kit, address);
-
-        if (isMounted) {
-          setGas(gas);
-        }
-      }
-    };
-
-    updateGas();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [address, kit]);
 
   const pay = async (merchantAddress: string, amount: string) => {
     try {

@@ -1,21 +1,15 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-  useContext,
-} from "react";
+import React, { useRef, useCallback, useContext } from "react";
 import { useRouter } from "next/router";
 import { useCelo } from "@celo/react-celo";
-import { getGas, nftContract } from "@/services/contracts";
+import { nftContract } from "@/services/contracts";
 import { WalletContext } from "@/context/WalletContext";
 import Form from "@/components/Form";
+import useGas from "@/hooks/useGas";
 
 const RegistrationForm = () => {
   const { address, connect } = useContext(WalletContext);
-
   const { kit } = useCelo();
-  const [gas, setGas] = useState(0);
+  const { gas } = useGas();
   const merchantInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -39,24 +33,6 @@ const RegistrationForm = () => {
       }
     }
   }, [address, connect, kit, router]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    (async () => {
-      if (address) {
-        const gas = await getGas(kit, address);
-
-        if (isMounted) {
-          setGas(gas);
-        }
-      }
-    })();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [address, kit]);
 
   return (
     <Form>
