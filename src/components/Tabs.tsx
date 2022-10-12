@@ -1,4 +1,3 @@
-import s from "@/styles/App.module.css";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useContext } from "react";
@@ -12,7 +11,7 @@ const links = [
   {
     label: "Register Merchant",
     href: "/register",
-    validate: (isRegistered: boolean) => true || !isRegistered,
+    validate: (isRegistered: boolean) => !isRegistered,
   },
 ];
 
@@ -21,18 +20,18 @@ export default function Tabs() {
   const { isRegistered } = useContext(WalletContext);
 
   return (
-    <ul className={s.nav}>
+    <ul className="flex p-4 -mb-1 w-full max-w-[420px] text-2xl font-bold justify-center">
       {links.map((link) => {
         if (link.validate && !link.validate(isRegistered)) {
           return null;
         }
 
+        const isActive = router.pathname == link.href;
+
         return (
           <li
             key={link.label}
-            className={`${s.navItem} ${
-              router.pathname == link.href ? s.navItemSelected : ""
-            }`}
+            className={`p-2  ${isActive ? "text-white" : "text-neutral-400"}`}
           >
             <Link href={link.href}>
               <a>{link.label}</a>

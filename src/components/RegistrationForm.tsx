@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import { useCelo } from "@celo/react-celo";
-import s from "@/styles/App.module.css";
 import { getGas, nftContract } from "@/services/contracts";
 import { WalletContext } from "@/context/WalletContext";
 
@@ -59,30 +58,30 @@ const RegistrationForm = () => {
   }, [address, kit]);
 
   return (
-    <div className={s.formWrap}>
-      <div className={s.formControl}>
-        <label className={s.label}>Merchant Name</label>
-        <div className={s.inputWrap}>
+    <form className="formWrap">
+      <div className="formControl">
+        <label className="label">Merchant Name</label>
+        <div className="inputWrap">
           <input
             ref={merchantInput}
             placeholder="Jen's Bakery"
-            className={s.input}
+            className="input"
             type="text"
           />
         </div>
       </div>
-      {/* <div className={s.formControl}>
-        <label className={s.label}>Minting Fee</label>
-        <div className={`${s.subLabel} ${s.subLabelLarge}`}>+5 CELO</div>
+      {/* <div className="formControl">
+        <label className="label">Minting Fee</label>
+        <div className="subLabel subLabelLarge">+5 CELO</div>
       </div> */}
-      <div className={s.formControl}>
-        <label className={s.label}>Gas Fee</label>
-        <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
+      <div className="formControl">
+        <label className="label">Gas Fee</label>
+        <div className="subLabel subLabelLarge">+ {gas} CELO</div>
       </div>
-      <button onClick={handleRegister} className={`${s.btn} ${s.btnLarge}`}>
+      <button onClick={handleRegister} className="btn-primary w-full text-lg">
         Mint carbonNFT
       </button>
-    </div>
+    </form>
   );
 };
 

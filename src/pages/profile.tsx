@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import Image from "next/image";
 import atob from "atob";
-import s from "@/styles/App.module.css";
 import { AiFillEye, AiFillHeart } from "react-icons/ai";
 import { BiStats } from "react-icons/bi";
 import Layout from "@/components/Layout";
@@ -40,38 +39,45 @@ export default function Profile() {
   return (
     <Layout>
       {isRegistered && (
-        <div className={s.profileWrap}>
-          <div className={s.nftWrap}>
-            <div className={s.nft}>
-              <Image src="/img/nft.png" width="384" height="522" alt="NFT" />
-            </div>
+        <div className="flex w-full flex-col align-top md:flex-row ">
+          <div className="flex-[1] justify-center flex">
+            <Image
+              src="/img/nft.png"
+              width="384"
+              height="522"
+              alt="NFT"
+              className="rounded-lg"
+            />
           </div>
-          <div className={s.profileDetails}>
-            <h2 className={s.profileTitle}>{metadata?.name}</h2>
-            <ul className={s.profileStats}>
+
+          <div className="p-5 flex-[2]">
+            <h2 className="text-4xl text-white">{metadata?.name}</h2>
+            <ul className="mt-5 mb-2 text-white">
               <li>
                 Owned by <b>0xadf234</b>
               </li>
               <li>
-                <AiFillEye fontSize="20px" /> <span>13,177 views</span>
+                <AiFillEye fontSize="20px" className="inline" />{" "}
+                <span>13,177 views</span>
               </li>
               <li>
-                <AiFillHeart fontSize="20px" /> <span>6003 favorite</span>
+                <AiFillHeart fontSize="20px" className="inline" />{" "}
+                <span>6003 favorite</span>
               </li>
             </ul>
-            <h3 className={s.offset}>
-              <span className={s.offsetTitle}>Total CO2 offset:</span>{" "}
+
+            <h3 className="text-2xl text-yellow-400">
+              <span className="text-xl text-white">Total CO2 offset:</span>{" "}
               {metadata?.attributes[0].value} tons
             </h3>
-            <div className={s.transactions}>
-              <header>
-                <span>
-                  <BiStats fontSize="20px" />
-                </span>
+            <div className="py-5 rounded-xl text-white">
+              <header className="p-2 border border-solid border-white flex">
+                <BiStats fontSize="20px" className="inline mr-2" />
                 <span>Offset History</span>
               </header>
-              <section>
-                <div>Empty offset history</div>
+
+              <section className="flex items-center min-h-[250px] w-full border border-solid border-white">
+                <div className="text-center w-full">Empty offset history</div>
               </section>
             </div>
           </div>

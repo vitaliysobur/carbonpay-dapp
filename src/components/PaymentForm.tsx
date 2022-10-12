@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import s from "@/styles/App.module.css";
 import { TOKEN_ADDRESS } from "@/constants/constants";
 import { toast } from "react-toastify";
 import {
@@ -81,35 +80,35 @@ const PaymentForm = () => {
   };
 
   return (
-    <div className={s.formWrap}>
-      <div className={s.formControl}>
-        <label className={s.label}>Merchant ID</label>
-        <div className={s.inputWrap}>
+    <form className="relative max-w-[420px] w-full mt-12 p-5 pt-12 bg-white bg-opacity-30 rounded-xl text-white">
+      <div className="formControl">
+        <label className="label">Merchant ID</label>
+        <div className="inputWrap">
           <input
             ref={merchantIdInput}
             onBlur={() => showName(merchantIdInput?.current?.value)}
             placeholder="0x..."
-            className={s.input}
+            className="input"
             type="text"
           />
-          <div className={s.subLabel}>{name}</div>
+          <div className="subLabel">{name}</div>
         </div>
       </div>
-      <div className={s.formControl}>
-        <label className={s.label}>Payment Amount</label>
-        <div className={s.inputWrap}>
+      <div className="formControl">
+        <label className="label">Payment Amount</label>
+        <div className="inputWrap">
           <input
             ref={paymentAmountInput}
             placeholder="0"
-            className={s.input}
+            className="input"
             type="text"
           />
-          <div className={s.subLabel}>$4.79 USD</div>
+          <div className="subLabel">$4.79 USD</div>
         </div>
       </div>
-      <div className={s.formControl}>
-        <label className={s.label}>Gas Fee</label>
-        <div className={`${s.subLabel} ${s.subLabelLarge}`}>+ {gas} CELO</div>
+      <div className="formControl">
+        <label className="label">Gas Fee</label>
+        <div className="subLabel subLabelLarge">+ {gas} CELO</div>
       </div>
       <button
         onClick={() =>
@@ -118,11 +117,11 @@ const PaymentForm = () => {
             paymentAmountInput?.current?.value
           )
         }
-        className={`${s.btn} ${s.btnLarge}`}
+        className="btn-primary w-full text-lg"
       >
         Authorize Transaction
       </button>
-    </div>
+    </form>
   );
 };
 
