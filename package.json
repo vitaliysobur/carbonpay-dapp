@@ -12,6 +12,7 @@
     "@celo/contractkit": "^2.1.0",
     "@celo/react-celo": "^4.1.0",
     "atob": "^2.1.2",
+    "formik": "^2.2.9",
     "next": "12.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",

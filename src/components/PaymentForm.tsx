@@ -10,13 +10,12 @@ import {
 import { WalletContext } from "@/context/WalletContext";
 import TransactionLink from "@/components/TransactionLink";
 import Form from "@/components/Form";
+import { Formik, Field, ErrorMessage } from "formik";
 
 const PaymentForm = () => {
   const { address, connect, kit } = useContext(WalletContext);
   const [gas, setGas] = useState(0);
   const [name, setName] = useState("");
-  const merchantIdInput = useRef<HTMLInputElement>(null);
-  const paymentAmountInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -38,12 +37,8 @@ const PaymentForm = () => {
     };
   }, [address, kit]);
 
-  const pay = async (merchantAddress?: string, amount?: string) => {
+  const pay = async (merchantAddress: string, amount: string) => {
     try {
-      if (!amount) {
-        return;
-      }
-
       await paymentProcessorContract(kit)
         .methods.pay(
           merchantAddress,
@@ -64,65 +59,69 @@ const PaymentForm = () => {
     }
   };
 
-  const showName = async (address?: string) => {
-    if (!address) return;
-
+  const validateMerchant = async (address: string) => {
     if (!isValidAddress(kit, address)) {
-      return setName("");
+      setName("");
+      return "Invalid address";
     }
 
     try {
-      const name = await getMerchantName(kit, address);
-      setName(name);
+      const merchantName = await getMerchantName(kit, address);
+      setName(merchantName);
     } catch (err) {
-      console.log(err);
       setName("");
+      return "Merchant not found";
     }
   };
 
   return (
-    <Form>
-      <div className="formControl">
-        <label className="label">Merchant ID</label>
-        <div className="inputWrap">
-          <input
-            ref={merchantIdInput}
-            onBlur={() => showName(merchantIdInput?.current?.value)}
-            placeholder="0x..."
-            className="input"
-            type="text"
-          />
-          <div className="subLabel">{name}</div>
+    <Formik
+      initialValues={{ merchant: "", amount: "" }}
+      onSubmit={async (values) => {
+        await pay(values.merchant, values.amount);
+      }}
+    >
+      <Form>
+        <div className="formControl">
+          <label className="label">Merchant ID</label>
+          <div className="inputWrap">
+            <Field
+              type="text"
+              name="merchant"
+              className="input"
+              placeholder="0x..."
+              validate={validateMerchant}
+            />
+
+            <div className="subLabel">{name}</div>
+            <ErrorMessage name="merchant" component="span" />
+          </div>
         </div>
-      </div>
-      <div className="formControl">
-        <label className="label">Payment Amount</label>
-        <div className="inputWrap">
-          <input
-            ref={paymentAmountInput}
-            placeholder="0"
-            className="input"
-            type="text"
-          />
-          <div className="subLabel">$4.79 USD</div>
+        <div className="formControl">
+          <label className="label">Payment Amount</label>
+          <div className="inputWrap">
+            <Field
+              type="number"
+              name="amount"
+              className="input"
+              placeholder="0"
+              validate={(value: number) =>
+                value > 1 ? undefined : "The minimum amount is 1$"
+              }
+            />
+            <p className="subLabel">$4.79 USD</p>
+            <ErrorMessage name="amount" component="div" />
+          </div>
         </div>
-      </div>
-      <div className="formControl">
-        <label className="label">Gas Fee</label>
-        <div className="subLabel subLabelLarge">+ {gas} CELO</div>
-      </div>
-      <button
-        onClick={() =>
-          pay(
-            merchantIdInput?.current?.value,
-            paymentAmountInput?.current?.value
-          )
-        }
-        className="w-full text-lg btn-primary"
-      >
-        Authorize Transaction
-      </button>
-    </Form>
+        <div className="formControl">
+          <label className="label">Gas Fee</label>
+          <div className="subLabel subLabelLarge">+ {gas} CELO</div>
+        </div>
+        <button type="submit" className="w-full text-lg btn-primary">
+          Authorize Transaction
+        </button>
+      </Form>
+    </Formik>
   );
 };
 
