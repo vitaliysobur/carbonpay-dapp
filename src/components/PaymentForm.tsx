@@ -1,52 +1,22 @@
 import React, { useContext, useState } from "react";
-import { TOKEN_ADDRESS } from "@/constants/constants";
-import { toast } from "react-toastify";
-import {
-  getMerchantName,
-  isValidAddress,
-  paymentProcessorContract,
-} from "@/services/contracts";
 import { WalletContext } from "@/context/WalletContext";
-import TransactionLink from "@/components/TransactionLink";
 import Form from "@/components/Form";
 import { Formik, Field, ErrorMessage } from "formik";
 import useGas from "@/hooks/useGas";
 
 const PaymentForm = () => {
+  const { pay, isValidAddress, getMerchantName } = useContext(WalletContext);
   const { gas } = useGas();
-  const { address, connect, kit } = useContext(WalletContext);
   const [name, setName] = useState("");
 
-  const pay = async (merchantAddress: string, amount: string) => {
-    try {
-      await paymentProcessorContract(kit)
-        .methods.pay(
-          merchantAddress,
-          TOKEN_ADDRESS,
-          kit.connection.web3.utils.toWei(amount, "ether")
-        )
-        .send({ from: address })
-        .on("transactionHash", function (hash: string) {
-          toast.info(() => <TransactionLink hash={hash} />);
-        });
-    } catch (err) {
-      console.log(err);
-      if (/4001/.test(err as string)) {
-        console.log("Rejected");
-      } else {
-        !address && (await connect());
-      }
-    }
-  };
-
   const validateMerchant = async (address: string) => {
-    if (!isValidAddress(kit, address)) {
+    if (!isValidAddress(address)) {
       setName("");
       return "Invalid address";
     }
 
     try {
-      const merchantName = await getMerchantName(kit, address);
+      const merchantName = await getMerchantName(address);
       setName(merchantName);
     } catch (err) {
       setName("");
@@ -85,13 +55,20 @@ const PaymentForm = () => {
           <label className="label">Payment Amount</label>
           <div className="inputWrap">
             <Field
-              type="number"
+              type="string"
               name="amount"
               className="input"
               placeholder="0"
-              validate={(value: number) =>
-                value > 1 ? undefined : "The minimum amount is 1$"
-              }
+              validate={(value: string) => {
+                const amount = parseFloat(value);
+                if (isNaN(amount)) {
+                  return "Invalid amount";
+                }
+
+                if (amount <= 0) {
+                  return "Amount must be greater than 0";
+                }
+              }}
             />
             <p className="subLabel">$4.79 USD</p>
             <ErrorMessage
