@@ -7,7 +7,7 @@
     @apply py-3 px-6 rounded-xl select-none text-white bg-gradient-to-tr from-yellow-400 to-sky-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75;
   }
 
-  // TODO: Refactor form components
+  /* TODO: Refactor form components */
   .formControl {
     margin-bottom: 30px;
   }
